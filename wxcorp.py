@@ -12,7 +12,7 @@ define("port", default=8000, help="run on the given port", type=int)
 
 class StaticHandler(tornado.web.RequestHandler):
     def get(self, htmlfile):
-        self.render(htmlfile)
+        self.render(htmlfile + ".html")
 
 class IndexHandler(tornado.web.RequestHandler):
     def get(self):
@@ -38,7 +38,8 @@ if __name__ == "__main__":
         "cookie_secret": "bZJc2sWbQLKos6GkHn/VB9oXwQt8S0R0kRvJ5/xJ89E=",
         "xsrf_cookies": True,
         "login_url": "/login" }
-    handler = [(r'/static/(\w+)', StaticHandler),
+    handler = [(r'/menu/(today)', StaticHandler),
+               (r'/menu/(order)', StaticHandler),
                (r'/', IndexHandler),
                (r'/login', LoginHandler),]
     application = tornado.web.Application(handler, **settings)
