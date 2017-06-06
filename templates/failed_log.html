@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>登录失败</title>
+        <script type="text/javascript">
+            window.onload = function() {
+                countDown(3);
+            }
+            function countDown(sec) {
+                if (sec > 0) {
+                    content = sec + "秒后返回首页";
+                    sec--;
+                    content = "<a href=\"/\">" + content + "</a>";
+                    document.getElementById("tips").innerHTML = content;
+                    setTimeout("countDown(" + sec + ")", 1000);
+                } else {
+                    window.location.assign("/");
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <p>用户名或密码错误</p>
+        <p id="tips"></p>
+    </body>
+</html>
+
