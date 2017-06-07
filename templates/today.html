@@ -9,10 +9,17 @@
             }
             function upload_pic() {
             }
+            function addon() {
+                input = document.createElement("input");
+                input.type = "file";
+                t = document.getElementById("upload_pic");
+                t.appendChild(input);
+            }
         </script>
     </head>
     <body>
         <div id="upload_pic">
+            <img id="slab" src="/static/food.png" onclick="addon()" />
         </div>
     </body>
 </html>
