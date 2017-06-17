@@ -2,7 +2,7 @@
 
 import hashlib
 
-from sqlalchemy import Column, String, Integer, create_engine
+from sqlalchemy import Column, String, Integer, Date, create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -24,6 +24,24 @@ class User(Base):
     #用户的密码hash值
     password = Column(String(1024))
 
+class Dish(Base):
+# 表的名字:
+    __tablename__ = 'dish'
+    def __init__(self, **arr):
+        self.id = arr['id']
+        self.name = arr['name']
+        self.pic_loc = arr['pic_loc']
+        self.time = arr['time']
+# 表的结构:
+    #图片的id
+    id = Column(Integer, primary_key=True)
+    #图片的名字
+    name = Column(String(128))
+    #图片存储的位置
+    pic_loc = Column(String(256))
+    #图片上传的时间
+    time = Column(Date)
+
 # 初始化数据库连接:
 engine = create_engine('mysql+mysqlconnector://root:@localhost:3306/wxcorp',encoding='utf-8')
 # 创建DBSession类型:
@@ -39,8 +57,26 @@ def query_user(line):
     if not res:
         return None
     return True
-    
+"""
+将上传的图片信息写入数据库，图片存放在本地服务器上
+一个图片对应一道菜
+"""
+def write_dish(**dic):
+    session = DBSession()
+    for e in dic:
+        [pic_loc, timestamp] = dic[e].split('\3')
+        d = Dish(id=0, name=e, pic_loc=pic_loc, time=timestamp)
+        session.add(d)
+    session.commit()
+    session.close()
+"""
+查询指定日期的菜谱信息, 指定日期是yyyymmdd
+"""
+def query_menu_list(timestamp):
+    session = DBSession()
+    res = session.query(Dish.name, Dish.pic_loc, Dish.time).filter(Dish.time==timestamp)
+    data = [[str(e.name), str(e.pic_loc), "%4d%2d%2d"%(e.time.year, e.time.month, e.time.day)] for e in res]
+    return data
 if __name__ == "__main__":
-    line = 'admin' + '\3' + '123'
-    res = query_user(line)
-    print(res)
+    d = query_menu_list("20170617")
+    print d

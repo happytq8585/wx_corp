@@ -3,23 +3,47 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>录入今日菜谱</title>
+        <style type="text/css">
+            #slab {
+                width: 50px;
+                height: 50px;
+            }
+        </style>
         <script type="text/javascript">
             window.onload = init;
             function init() {
             }
-            function upload_pic() {
-            }
             function addon() {
+                p = document.getElementsByTagName("form")[0];
+                submit = document.getElementsByTagName("submit")[0];
                 input = document.createElement("input");
                 input.type = "file";
-                t = document.getElementById("upload_pic");
-                t.appendChild(input);
+                input.name = "file";
+                p.insertBefore(input, submit);
+            }
+            function menu_list_display(para) {
+                data = para['list'];
+                target = document.getElementsByClassName("menu_list_ul")[0];
+                for (var i = 0; i < data.length; ++i) {
+                    d = document.createElement("li");
+                    e = "name=" + data[i][0] + "<br>";
+                    e += "<img src=\"" + "http://localhost:8000/static/" + data[i][1] + "\">";
+                    e += "<br>";
+                    e += "date:" + data[i][2];
+                    d.innerHTML = e;
+                    target.appendChild(d);
+                }
             }
         </script>
     </head>
     <body>
-        <div id="upload_pic">
-            <img id="slab" src="/static/food.png" onclick="addon()" />
+        <div class="menu_list_div">
+            <ul class="menu_list_ul">
+            </ul>
+        </div>
+        <div class="add_list_div">
+            <button name="add" onclick="addon()">
         </div>
     </body>
+    <script src="http://localhost:8000/menu_list?callback=menu_list_display"></script>
 </html>
