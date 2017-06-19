@@ -12,15 +12,6 @@
                 width: 180px;
                 height: 240px;
             }
-            #addpic {
-                width: 100px;
-                height: 100px;
-                border: bold;
-                margin-left: 4%;
-            }
-            .star {
-                line-height: 0px;
-            }
         </style>
         <script type="text/javascript">
             window.onload = init;
@@ -28,7 +19,6 @@
             }
             function addon() {
                 form = document.createElement("form");
-                this.form = form;
                 _xsrf = document.getElementsByName("_xsrf")[0].value;
                 form.action = "/up" + "?_xsrf=" + _xsrf;
                 form.method = "post";
@@ -40,40 +30,21 @@
                 submit = document.createElement("input");
                 submit.type = "submit";
                 submit.value = "submit";
-                cancel = document.createElement("button");
-                cancel.type = "button";
-                cancel.innerHTML = "cancel";
-                cancel.onclick = "cancel()";
                 form.appendChild(submit);
-                form.appendChild(cancel);
                 div = document.getElementsByClassName("add_list_div")[0];
                 div.appendChild(form);
-                this.cancel = function cancel() {
-                    document.removeChild(this.form);
-                }
             }
             function menu_list_display(para) {
                 data = para['list'];
-                comment = para['comment'];
+                host = "http://192.168.3.18:8000";
                 host = "http://localhost:8000";
                 target = document.getElementsByClassName("menu_list_ul")[0];
                 for (var i = 0; i < data.length; ++i) {
                     d = document.createElement("li");
-                    e =  data[i][0] + "<br>";
+                    e = "name=" + data[i][0] + "<br>";
                     e += "<img src=\"" + host + "/" + data[i][1] + "\">";
                     e += "<br>";
-                    e += "<table class=\"star_table\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">";
-                    e += "<tr class=\"star_row\"><td class=\"star_col1\">*****:</td>";
-                    e += "<td class=\"star_col2\">" + data[i][3] + "</td></tr>";
-                    e += "<tr class=\"star_row\"><td class=\"star_col1\">****:</td>";
-                    e += "<td class=\"star_col2\">" + data[i][4] + "</td></tr>";
-                    e += "<tr class=\"star_row\"><td class=\"star_col1\">***:</td>";
-                    e += "<td class=\"star_col2\">" + data[i][5] + "</td></tr>";
-                    e += "<tr class=\"star_row\"><td class=\"star_col1\">**:</td>";
-                    e += "<td class=\"star_col2\">" + data[i][6] + "</td></tr>";
-                    e += "<tr class=\"star_row\"><td class=\"star_col1\">*:</td>";
-                    e += "<td class=\"star_col2\">" + data[i][7] + "</td></tr>";
-                    e += "</table>";
+                    e += "date:" + data[i][2];
                     d.innerHTML = e;
                     target.appendChild(d);
                 }
@@ -81,16 +52,13 @@
         </script>
     </head>
     <body>
-        <div class="title">
-            <h1>今日菜谱</h1>
-        </div>
         <div class="menu_list_div">
             <ul class="menu_list_ul">
             </ul>
         </div>
         <div class="add_list_div">
             {% raw xsrf_form_html()  %}
-            <img id="addpic" src="/static/addpic.jpg" alt="添加图片" onclick="addon()">
+            <button type="button" onclick="addon()">添加</button>
         </div>
     </body>
     <script src="http://localhost:8000/menu_list?callback=menu_list_display"></script>

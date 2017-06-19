@@ -32,6 +32,11 @@ class Dish(Base):
         self.name = arr['name']
         self.pic_loc = arr['pic_loc']
         self.time = arr['time']
+        self.one    = int(arr.get('one', '0'))
+        self.two    = int(arr.get('two', '0'))
+        self.three  = int(arr.get('three', '0'))
+        self.four   = int(arr.get('four', '0'))
+        self.five   = int(arr.get('five', '0'))
 # 表的结构:
     #图片的id
     id = Column(Integer, primary_key=True)
@@ -40,7 +45,12 @@ class Dish(Base):
     #图片存储的位置
     pic_loc = Column(String(256))
     #图片上传的时间
-    time = Column(Date)
+    time  = Column(Date)
+    one   = Column(Integer)
+    two   = Column(Integer)
+    three = Column(Integer)
+    four  = Column(Integer)
+    five  = Column(Integer)
 
 # 初始化数据库连接:
 engine = create_engine('mysql+mysqlconnector://root:@localhost:3306/wxcorp',encoding='utf-8')
@@ -74,9 +84,9 @@ def write_dish(**dic):
 """
 def query_menu_list(timestamp):
     session = DBSession()
-    res = session.query(Dish.name, Dish.pic_loc, Dish.time).filter(Dish.time==timestamp)
-    data = [[str(e.name), str(e.pic_loc), "%4d%2d%2d"%(e.time.year, e.time.month, e.time.day)] for e in res]
+    res = session.query(Dish).filter(Dish.time == timestamp).all()
+    data = [[str(e.name), str(e.pic_loc), "%4d%02d%02d"%(e.time.year, e.time.month, e.time.day), e.one, e.two, e.three, e.four, e.five] for e in res]
     return data
 if __name__ == "__main__":
-    d = query_menu_list("20170617")
+    d = query_menu_list("20170619")
     print d

@@ -12,5 +12,10 @@ create table if not exists dish
  id int unsigned primary key auto_increment,
  name varchar(128) not null,
  pic_loc  varchar(256) not null,
- time date not null
+ time date not null,
+ one int unsigned default 0,
+ two int unsigned default 0,
+ three int unsigned default 0,
+ four int unsigned default 0,
+ five int unsigned default 0
 ) engine=InnoDB, charset=utf8;
