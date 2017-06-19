@@ -8,26 +8,40 @@
                 width: 50px;
                 height: 50px;
             }
+            img {
+                width: 180px;
+                height: 240px;
+            }
         </style>
         <script type="text/javascript">
             window.onload = init;
             function init() {
             }
             function addon() {
-                p = document.getElementsByTagName("form")[0];
-                submit = document.getElementsByTagName("submit")[0];
-                input = document.createElement("input");
-                input.type = "file";
-                input.name = "file";
-                p.insertBefore(input, submit);
+                form = document.createElement("form");
+                _xsrf = document.getElementsByName("_xsrf")[0].value;
+                form.action = "/up" + "?_xsrf=" + _xsrf;
+                form.method = "post";
+                form.enctype = "multipart/form-data";
+                file = document.createElement("input");
+                file.type = "file";
+                file.name = "file";
+                form.appendChild(file);
+                submit = document.createElement("input");
+                submit.type = "submit";
+                submit.value = "submit";
+                form.appendChild(submit);
+                div = document.getElementsByClassName("add_list_div")[0];
+                div.appendChild(form);
             }
             function menu_list_display(para) {
                 data = para['list'];
+                host = "http://192.168.3.18:8000";
                 target = document.getElementsByClassName("menu_list_ul")[0];
                 for (var i = 0; i < data.length; ++i) {
                     d = document.createElement("li");
                     e = "name=" + data[i][0] + "<br>";
-                    e += "<img src=\"" + "http://localhost:8000/static/" + data[i][1] + "\">";
+                    e += "<img src=\"" + host + "/" + data[i][1] + "\">";
                     e += "<br>";
                     e += "date:" + data[i][2];
                     d.innerHTML = e;
@@ -42,8 +56,9 @@
             </ul>
         </div>
         <div class="add_list_div">
-            <button name="add" onclick="addon()">
+            {% raw xsrf_form_html()  %}
+            <button type="button" onclick="addon()">添加</button>
         </div>
     </body>
-    <script src="http://localhost:8000/menu_list?callback=menu_list_display"></script>
+    <script src="http://192.168.3.18:8000/menu_list?callback=menu_list_display"></script>
 </html>
