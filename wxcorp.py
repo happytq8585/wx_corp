@@ -16,7 +16,12 @@ define("port", default=8000, help="run on the given port", type=int)
 
 class MenuList(tornado.web.RequestHandler):
     def get(self):
-        timestamp = time.strftime("%Y%m%d", time.localtime())
+        d = self.get_argument("d")
+        if not d:
+            timestamp = time.strftime("%Y%m%d", time.localtime())
+        else:
+            a = d.split('-')
+            timestamp = "%4d%02d%02d"%(int(a[0]), int(a[1]), int(a[2]))
         data = query_menu_list(timestamp)
         res = {"list": data}
         res = str(res)

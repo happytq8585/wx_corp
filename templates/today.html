@@ -21,6 +21,14 @@
             .star {
                 line-height: 0px;
             }
+            .div_body {
+                margin-left:25%;
+                margin-right:25%;
+            }
+            .div_calender {
+                float: right;
+                margin-right: 25%;
+            }
         </style>
         <script type="text/javascript">
             window.onload = init;
@@ -54,9 +62,13 @@
             }
             function menu_list_display(para) {
                 data = para['list'];
-                comment = para['comment'];
                 host = "http://localhost:8000";
-                target = document.getElementsByClassName("menu_list_ul")[0];
+                host = "http://192.168.3.18:8000";
+                parent = document.getElementsByTagName("ul")[0];
+                target = document.getElementsByTagName("li");
+                for ( ; target.length; ) {
+                    parent.removeChild(target[0]);
+                }
                 for (var i = 0; i < data.length; ++i) {
                     d = document.createElement("li");
                     e =  data[i][0] + "<br>";
@@ -75,14 +87,39 @@
                     e += "<td class=\"star_col2\">" + data[i][7] + "</td></tr>";
                     e += "</table>";
                     d.innerHTML = e;
-                    target.appendChild(d);
+                    parent.appendChild(d);
                 }
+            }
+            function dateclick() {
+                var date = new Date();
+                var m = date.getMonth() < 9 ? "0" + (date.getMonth()+1) : date.getMonth();
+                var day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+                var t = (date.getYear() + 1900) + '-' + m + '-' + day;
+                var d = document.getElementById("date").value;
+                if (d != t) {
+                    document.getElementById("title").innerHTML = d + "日菜谱";
+                }
+                var r = document.getElementById("menu_list_display");
+                if (r) {
+                    var t = document.getElementsByTagName("body")[0];
+                    t.removeChild(r);
+                }
+                var s = document.createElement("script");
+                s.id = "menu_list_display";
+                s.src = "http://192.168.3.18:8000/menu_list?d=" + d + "&callback=menu_list_display";
+                body = document.getElementsByTagName("body")[0];
+                body.appendChild(s);
             }
         </script>
     </head>
     <body>
+    <div class="div_body">
         <div class="title">
-            <h1>今日菜谱</h1>
+            <h1 id="title">今日菜谱</h1>
+        </div>
+        <div class="div_calender">
+            <input type="date" id="date">
+            <button type="button" onclick="dateclick()">Go</button>
         </div>
         <div class="menu_list_div">
             <ul class="menu_list_ul">
@@ -92,6 +129,7 @@
             {% raw xsrf_form_html()  %}
             <img id="addpic" src="/static/addpic.jpg" alt="添加图片" onclick="addon()">
         </div>
+    </div>
     </body>
-    <script src="http://localhost:8000/menu_list?callback=menu_list_display"></script>
+    <script id="menu_list_display" src="http://192.168.3.18:8000/menu_list?d=&callback=menu_list_display"></script>
 </html>
