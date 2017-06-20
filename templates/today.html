@@ -18,6 +18,9 @@
                 border: bold;
                 margin-left: 4%;
             }
+            #logout {
+                float: right;
+            }
             .star {
                 line-height: 0px;
             }
@@ -96,7 +99,7 @@
                 var day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
                 var t = (date.getYear() + 1900) + '-' + m + '-' + day;
                 var d = document.getElementById("date").value;
-                if (d != t) {
+                if (d != t && d != "") {
                     document.getElementById("title").innerHTML = d + "日菜谱";
                 }
                 var r = document.getElementById("menu_list_display");
@@ -116,6 +119,7 @@
     <div class="div_body">
         <div class="title">
             <h1 id="title">今日菜谱</h1>
+            <a id="logout" href="/logout">退出</a>
         </div>
         <div class="div_calender">
             <input type="date" id="date">
@@ -125,10 +129,12 @@
             <ul class="menu_list_ul">
             </ul>
         </div>
+{% if username == "admin" %}
         <div class="add_list_div">
             {% raw xsrf_form_html()  %}
             <img id="addpic" src="/static/addpic.jpg" alt="添加图片" onclick="addon()">
         </div>
+{% end %}
     </div>
     </body>
     <script id="menu_list_display" src="http://192.168.3.18:8000/menu_list?d=&callback=menu_list_display"></script>

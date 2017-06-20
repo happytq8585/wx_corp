@@ -13,6 +13,10 @@ sys.setdefaultencoding('utf-8')
 Base = declarative_base()
 
 class User(Base):
+    def __init__(self, name, password):
+        self.id       = 0
+        self.name     = name
+        self.password = password
 # 表的名字:
     __tablename__ = 'canteen_user'
 
@@ -87,6 +91,23 @@ def query_menu_list(timestamp):
     res = session.query(Dish).filter(Dish.time == timestamp).all()
     data = [[str(e.name), str(e.pic_loc), "%4d%02d%02d"%(e.time.year, e.time.month, e.time.day), e.one, e.two, e.three, e.four, e.five] for e in res]
     return data
+
+def regist_user(info):
+    [uname, passwd] = info.split('\3');
+    if not uname or not passwd:
+        return -1#name or password is None
+    session = DBSession()
+    res = session.query(User).filter(User.name == uname).count()
+    if not res:
+        sha512 = hashlib.sha512(passwd.encode()).hexdigest()
+        u = User(uname, sha512)
+        ret = session.add(u)
+        session.commit()
+        return 0#regist successfully
+    return 1#name duplicated
+
 if __name__ == "__main__":
-    d = query_menu_list("20170619")
-    print d
+    uname   = "tiger";
+    passwd  = "456";
+    ret = regist_user(uname + '\3' + passwd)
+    print ret
