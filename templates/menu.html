@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <title>
+            {% if today['flag'] %}
+                今日菜谱
+            {% else %}
+                {{ today['date'] }}菜谱
+            {% end %}
+        </title>
+    </head>
+    <body>
+        <h1>
+            {% if today['flag'] %}
+                今日菜谱
+            {% else %}
+                {{ today['date'] }}菜谱
+            {% end %}
+        </h1>
+        <ul id="menu_list">
+        {% for e in data %}
+            <li>
+                <ul class="dish">
+                    <li> {{ e[0] }} </li>
+                    <li><img src="{{host_ip}}/{{ e[1] }}"></li>
+                    <li>date: {{ e[2] }}</li>
+                    <li>*****:{{ e[3] }}</li>
+                    <li>**** :{{ e[4] }}</li>
+                    <li>***  :{{ e[5] }}</li>
+                    <li>**   :{{ e[6] }}</li>
+                    <li>*    :{{ e[7] }}</li>
+                </ul>
+            </li>
+        {% end %}
+        </ul>
+    </body>
+</html>

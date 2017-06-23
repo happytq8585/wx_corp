@@ -8,26 +8,33 @@ import hashlib
 import os.path
 import json
 import time
+import re
 from tornado.options import define, options
 
 from tables import query_user, write_dish, query_menu_list, regist_user
+from hostip import get_ip_address
 
 define("port", default=8000, help="run on the given port", type=int)
 
-class MenuList(tornado.web.RequestHandler):
+class BaseHandler(tornado.web.RequestHandler):
+    def get_current_user(self):
+        return self.get_secure_cookie("username")
+
+class MenuHandler(BaseHandler):
+    @tornado.web.authenticated
     def get(self):
-        d = self.get_argument("d")
-        if not d:
-            timestamp = time.strftime("%Y%m%d", time.localtime())
-        else:
-            a = d.split('-')
-            timestamp = "%4d%02d%02d"%(int(a[0]), int(a[1]), int(a[2]))
+        d = self.get_argument("day", None)
+        timestamp = time.strftime("%Y%m%d", time.localtime())
+        today = {"flag":True, "date":timestamp}
+        if d:
+            reg = "20[0-9]{2}"
+            if re.match(reg, d):
+                timestamp = d
+                today = {"flag":False, "date":d}
         data = query_menu_list(timestamp)
-        res = {"list": data}
-        res = str(res)
-        line = "menu_list_display(%s);"%res
-        self.write(line)
-class UploadFileHandler(tornado.web.RequestHandler):
+        ip = get_ip_address("eth0")
+        self.render("menu.html", today=today, data=data, host_ip="http://" + str(ip)+":"+str(options.port))
+class UploadFileHandler(BaseHandler):
     def get(self):
         self.render("up.html");
     def post(self):
@@ -48,7 +55,7 @@ class UploadFileHandler(tornado.web.RequestHandler):
                 up.write(meta['body'])
         write_dish(**names)
         self.write('上传成功!')
-class StaticHandler(tornado.web.RequestHandler):
+class StaticHandler(BaseHandler):
     def get(self, htmlfile):
         uname = self.get_cookie("username")
         self.render(htmlfile + ".html", username=uname)
@@ -67,20 +74,17 @@ class LoginHandler(tornado.web.RequestHandler):
         if not ret:
             self.render("failed_log.html")
         else:
-            self.set_cookie("username", uname)
-            self.render("success_log.html")
+            self.set_secure_cookie("username", uname)
+            self.redirect("/welcome")
+class WelcomeHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        uname = self.get_secure_cookie("username")
+        self.render("success_log.html", username=uname)
 class LogoutHandler(tornado.web.RequestHandler):
     def get(self):
         self.clear_cookie("username");
         self.redirect("/")
-class RegistHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.render("regist.html")
-    def post(self):
-        uname = self.get_argument("username")
-        upass = self.get_argument("password")
-        ret = regist_user(uname + '\3' + upass)
-        self.render("regist_stat.html", ret=ret)
 
 if __name__ == "__main__":
     tornado.options.parse_command_line()
@@ -90,13 +94,12 @@ if __name__ == "__main__":
         "cookie_secret": "bZJc2sWbQLKos6GkHn/VB9oXwQt8S0R0kRvJ5/xJ89E=",
         "xsrf_cookies": True,
         "login_url": "/login" }
-    handler = [(r'/menu/(today)', StaticHandler),
-               (r'/menu/(order)', StaticHandler),
+    handler = [(r'/menu', MenuHandler),
                (r'/', IndexHandler),
+               (r'/welcome', WelcomeHandler),
                (r'/login', LoginHandler),
                (r'/up', UploadFileHandler),
-               (r'/menu_list', MenuList),
-               (r'/regist', RegistHandler),
+               (r'/menu', MenuHandler),
                (r'/logout', LogoutHandler),
               ]
     application = tornado.web.Application(handler, **settings)

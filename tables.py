@@ -89,6 +89,8 @@ def write_dish(**dic):
 def query_menu_list(timestamp):
     session = DBSession()
     res = session.query(Dish).filter(Dish.time == timestamp).all()
+    if not res:
+        return []
     data = [[str(e.name), str(e.pic_loc), "%4d%02d%02d"%(e.time.year, e.time.month, e.time.day), e.one, e.two, e.three, e.four, e.five] for e in res]
     return data
 
