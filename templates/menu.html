@@ -16,6 +16,7 @@
                 {{ today['date'] }}菜谱
             {% end %}
         </h1>
+        {% include "userinfo.html" %}
         <ul id="menu_list">
         {% for e in data %}
             <li>

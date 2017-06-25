@@ -33,7 +33,9 @@ class MenuHandler(BaseHandler):
                 today = {"flag":False, "date":d}
         data = query_menu_list(timestamp)
         ip = get_ip_address("eth0")
-        self.render("menu.html", today=today, data=data, host_ip="http://" + str(ip)+":"+str(options.port))
+        hostip = "http://" + str(ip)+":"+str(options.port)
+        uname = self.get_secure_cookie("username")
+        self.render("menu.html", today=today, data=data, host_ip=hostip, username=uname)
 class UploadFileHandler(BaseHandler):
     def get(self):
         self.render("up.html");
