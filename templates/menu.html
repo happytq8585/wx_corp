@@ -7,6 +7,37 @@
                 {{ today['date'] }}菜谱
             {% end %}
         </title>
+        <script src="static/js/jquery.min.js"></script>
+        <script type="text/javascript">
+            window.onload = init;
+            function init() {
+                var d = document.getElementById("date").value;
+                if (d.trim() == "") {
+                    document.getElementById("date").value = getDate();
+                }
+            }
+            function getDate() {
+                var date = new Date();
+                var m = date.getMonth() + 1;
+                m = m < 10 ? "0" + m : m;
+                var d = date.getDate();
+                d = d < 10 ? "0" + d : d;
+                var dateString = date.getFullYear()+"-"+ m +"-" + d;
+                return dateString;
+            }
+            function dateclick() {
+               var d = document.getElementById("date").value.trim();
+               var reg = /^(\d{1,4})(-|\/)(\d{1,2})\2(\d{1,2})$/;     
+               var r = d.match(reg);
+               if (r == null) {
+                   d = getDate();
+               }
+               window.location.assign("/menu?day=" + d);
+            }
+            function fold() {
+                $("#fold").toggle(0, function(){$("#unfold").toggle();});
+            }
+        </script>
     </head>
     <body>
         <h1>
@@ -17,6 +48,8 @@
             {% end %}
         </h1>
         {% include "userinfo.html" %}
+        <input type="date" name="date" id="date">
+        <button type="button" onclick="dateclick()">Go</button>
         <ul id="menu_list">
         {% for e in data %}
             <li>
@@ -33,5 +66,6 @@
             </li>
         {% end %}
         </ul>
+        <a href="javascript:fold()"><span id="fold">展开</span><span id="unfold">收起</span><a>
     </body>
 </html>

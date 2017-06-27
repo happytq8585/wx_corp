@@ -21,24 +21,37 @@ class BaseHandler(tornado.web.RequestHandler):
         return self.get_secure_cookie("username")
 
 class MenuHandler(BaseHandler):
-    @tornado.web.authenticated
+    #@tornado.web.authenticated
     def get(self):
         d = self.get_argument("day", None)
-        timestamp = time.strftime("%Y%m%d", time.localtime())
+        t = time.localtime();
+        timestamp = time.strftime("%Y%m%d", t)
+        cur = "%4d-%02d-%02d" % (t.tm_year, t.tm_mon, t.tm_mday);
         today = {"flag":True, "date":timestamp}
         if d:
-            reg = "20[0-9]{2}"
+            d = str(d)
+            reg = "20[0-9]{2}-[0-9]{2}-[0-9]{2}"
             if re.match(reg, d):
                 timestamp = d
                 today = {"flag":False, "date":d}
+        if cur == d:
+            today['flag'] = True 
         data = query_menu_list(timestamp)
         ip = get_ip_address("eth0")
         hostip = "http://" + str(ip)+":"+str(options.port)
         uname = self.get_secure_cookie("username")
-        self.render("menu.html", today=today, data=data, host_ip=hostip, username=uname)
+        res = {}
+        res['time']      = today
+        res['serverip']  = hostip
+        res['username']  = uname
+        res['data']      = data
+        print res
+        #self.render("menu.html", today=today, data=data, host_ip=hostip, username=uname)
 class UploadFileHandler(BaseHandler):
+    #@tornado.web.authenticated
     def get(self):
         self.render("up.html");
+    #@tornado.web.authenticated
     def post(self):
         if not os.path.exists("static/files"):
             os.makedirs("static/files");
@@ -77,12 +90,14 @@ class LoginHandler(tornado.web.RequestHandler):
             self.render("failed_log.html")
         else:
             self.set_secure_cookie("username", uname)
+            self.set_secure_cookie("role", ret)
             self.redirect("/welcome")
 class WelcomeHandler(BaseHandler):
-    @tornado.web.authenticated
+    #@tornado.web.authenticated
     def get(self):
         uname = self.get_secure_cookie("username")
-        self.render("success_log.html", username=uname)
+        role  = self.get_secure_cookie("role")
+        self.render("success_log.html", username=uname, role=role)
 class LogoutHandler(tornado.web.RequestHandler):
     def get(self):
         self.clear_cookie("username");

@@ -13,12 +13,13 @@ sys.setdefaultencoding('utf-8')
 Base = declarative_base()
 
 class User(Base):
-    def __init__(self, name, password):
+    def __init__(self, name, password, role):
         self.id       = 0
         self.name     = name
         self.password = password
+        self.role     = role
 # 表的名字:
-    __tablename__ = 'canteen_user'
+    __tablename__ = 'wxcorp_user'
 
 # 表的结构:
     #用户的id
@@ -27,6 +28,20 @@ class User(Base):
     name = Column(String(64))
     #用户的密码hash值
     password = Column(String(1024))
+    role     = Column(Integer)
+class UserInfo(Base):
+    def __init__(self, id, uid, cid, oid, t):
+        self.id      = id
+        self.user_id = uid
+        self.comment_id = cid
+        self.order_id= oid
+        self.time    = t
+    __tablename__    = "user_info"
+    id               = Column(Integer, primary_key=True)
+    user_id          = Column(Integer)
+    comment_id       = Column(Integer)
+    order_id         = Column(Integer)
+    time             = Column(Date)
 
 class Dish(Base):
 # 表的名字:
@@ -67,10 +82,10 @@ def query_user(line):
     session = DBSession()
     name, password = line.split('\3')
     sha512 = hashlib.sha512(password.encode()).hexdigest()
-    res = session.query(User.name, User.password).filter(User.name==name, User.password==sha512).first()
+    res = session.query(User.name, User.password, User.role).filter(User.name==name, User.password==sha512).first()
     if not res:
         return None
-    return True
+    return res[2]
 """
 将上传的图片信息写入数据库，图片存放在本地服务器上
 一个图片对应一道菜
