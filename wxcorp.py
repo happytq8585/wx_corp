@@ -101,6 +101,7 @@ class WelcomeHandler(BaseHandler):
 class LogoutHandler(tornado.web.RequestHandler):
     def get(self):
         self.clear_cookie("username");
+        self.clear_cookie("role");
         self.redirect("/")
 
 if __name__ == "__main__":
