@@ -29,19 +29,6 @@ class User(Base):
     #用户的密码hash值
     password = Column(String(1024))
     role     = Column(Integer)
-class UserInfo(Base):
-    def __init__(self, id, uid, cid, oid, t):
-        self.id      = id
-        self.user_id = uid
-        self.comment_id = cid
-        self.order_id= oid
-        self.time    = t
-    __tablename__    = "user_info"
-    id               = Column(Integer, primary_key=True)
-    user_id          = Column(Integer)
-    comment_id       = Column(Integer)
-    order_id         = Column(Integer)
-    time             = Column(Date)
 
 class Dish(Base):
 # 表的名字:

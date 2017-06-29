@@ -9,6 +9,7 @@ import os.path
 import json
 import time
 import re
+from tornado.web import StaticFileHandler
 from tornado.options import define, options
 
 from tables import query_user, write_dish, query_menu_list, regist_user
@@ -46,7 +47,7 @@ class MenuHandler(BaseHandler):
         res['username']  = uname
         res['data']      = data
         print res
-        #self.render("menu.html", today=today, data=data, host_ip=hostip, username=uname)
+        self.render("menu.html", today=today, data=data, host_ip=hostip, username=uname)
 class UploadFileHandler(BaseHandler):
     #@tornado.web.authenticated
     def get(self):
@@ -70,10 +71,6 @@ class UploadFileHandler(BaseHandler):
                 up.write(meta['body'])
         write_dish(**names)
         self.write('上传成功!')
-class StaticHandler(BaseHandler):
-    def get(self, htmlfile):
-        uname = self.get_cookie("username")
-        self.render(htmlfile + ".html", username=uname)
 
 class IndexHandler(tornado.web.RequestHandler):
     def get(self):
@@ -90,14 +87,22 @@ class LoginHandler(tornado.web.RequestHandler):
             self.render("failed_log.html")
         else:
             self.set_secure_cookie("username", uname)
-            self.set_secure_cookie("role", ret)
+            self.set_secure_cookie("role", "%d"%ret)
             self.redirect("/welcome")
+
 class WelcomeHandler(BaseHandler):
     #@tornado.web.authenticated
     def get(self):
         uname = self.get_secure_cookie("username")
+        self.render("main.html", username=uname)
+
+class CanteenIndexHandler(BaseHandler):
+    #@tornado.web.authenticated
+    def get(self):
+        uname = self.get_secure_cookie("username")
         role  = self.get_secure_cookie("role")
-        self.render("success_log.html", username=uname, role=role)
+        self.render("canteen_index.html", username=uname, role=role)
+
 class LogoutHandler(tornado.web.RequestHandler):
     def get(self):
         self.clear_cookie("username");
@@ -111,8 +116,14 @@ if __name__ == "__main__":
         "static_path": os.path.join(os.path.dirname(__file__), "static"),
         "cookie_secret": "bZJc2sWbQLKos6GkHn/VB9oXwQt8S0R0kRvJ5/xJ89E=",
         "xsrf_cookies": True,
-        "login_url": "/login" }
-    handler = [(r'/menu', MenuHandler),
+        "login_url": "/login",
+        "debug":True}
+    handler = [
+               (r"/static/(.*)", StaticFileHandler, {"path": "static"}),  
+               (r"/css/(.*)", StaticFileHandler, {"path": "static/css"}),  
+               (r"/js/(.*)", StaticFileHandler, {"path": "static/js"}),  
+               (r"/img/(.*)", StaticFileHandler, {"path": "static/img"}), 
+               (r'/canteen_index', CanteenIndexHandler),
                (r'/', IndexHandler),
                (r'/welcome', WelcomeHandler),
                (r'/login', LoginHandler),
