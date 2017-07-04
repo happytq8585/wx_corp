@@ -94,14 +94,14 @@ class WelcomeHandler(BaseHandler):
     #@tornado.web.authenticated
     def get(self):
         uname = self.get_secure_cookie("username")
-        self.render("main.html", username=uname)
+        self.render("begin.html", username=uname)
 
 class CanteenIndexHandler(BaseHandler):
     #@tornado.web.authenticated
     def get(self):
         uname = self.get_secure_cookie("username")
         role  = self.get_secure_cookie("role")
-        self.render("canteen_index.html", username=uname, role=role)
+        self.render("canteen.html", username=uname, role=role)
 
 class LogoutHandler(tornado.web.RequestHandler):
     def get(self):
@@ -123,7 +123,7 @@ if __name__ == "__main__":
                (r"/css/(.*)", StaticFileHandler, {"path": "static/css"}),  
                (r"/js/(.*)", StaticFileHandler, {"path": "static/js"}),  
                (r"/img/(.*)", StaticFileHandler, {"path": "static/img"}), 
-               (r'/canteen_index', CanteenIndexHandler),
+               (r'/canteen', CanteenIndexHandler),
                (r'/', IndexHandler),
                (r'/welcome', WelcomeHandler),
                (r'/login', LoginHandler),

@@ -1,0 +1,100 @@
+
+.navbar-brand>img{
+    width:20px;
+}
+.canteenLeft{
+    width:65%;
+    margin-top:30px;
+}
+.canteenRight{
+    width:35%;
+}
+.canteenmenuBox{
+    width:90%;
+    height:auto;
+    padding:10px 20px;
+    border:1px solid #d6d6d6;
+    margin-top:20px;
+}
+.canteenmenuBox img{
+    width:200px;
+    max-height: 200px;
+}
+.canteenmenuBox>.left{
+    margin-right:10px;
+}
+.canteenmenuBox>.left > p {
+    margin-bottom:10px;
+}
+.canteenmenuName>span:nth-of-type(1){
+    font-size: 16px;
+    display: inline-block;
+    margin-right:15px;
+}
+.canteenmenuName>span:nth-of-type(2){
+    font-size: 18px;
+    color: #FF6715;
+}
+.canteenmenuBtn{
+    width:120px;
+    height:30px;
+    -webkit-border-radius:6px;
+    -moz-border-radius:6px;
+    border-radius:6px;
+    background: #FF6715;
+    color: #fff;
+    text-align: center;
+    line-height: 30px;
+    cursor: pointer;
+}
+.Reserve{
+    width:100%;
+    height:100%;
+    position: fixed;
+    top:0;
+    left:0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1031;
+    display: none;
+}
+.ReserveBox{
+    width:420px;
+    height:230px;
+    background: #fff;
+    position: absolute;
+    top:20%;
+    left:0;
+    right:0;
+    margin:auto;
+}
+.ReserveBox>p{
+    width:100%;
+    height:40px;
+    line-height: 40px;
+    padding:0 10px;
+    background: #f3f3f3;
+}
+.ReserveBox>p img{
+    float: right;
+    cursor: pointer;
+    margin-top:15px;
+}
+.ReserveBox>div{
+    margin:20px 120px;
+}
+.ReserveBox>.ReserveBtn{
+    width:120px;
+    height:30px;
+    -webkit-border-radius:6px;
+    -moz-border-radius:6px;
+    border-radius:6px;
+    background: #FF6715;
+    color: #fff;
+    text-align: center;
+    line-height: 30px;
+    cursor: pointer;
+    margin:30px auto;
+}
+.ReserveBox input{
+    width:100px;
+}
