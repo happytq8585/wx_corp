@@ -1,41 +1,12 @@
-
-.navbar-brand>img{
-    width:20px;
+.canteenList{
+    width:80%;
+    margin:20px auto;
 }
-.canteenLeft{
-    width:65%;
-    margin-top:30px;
-}
-.canteenRight{
-    width:35%;
-}
-.canteenmenuBox{
-    width:90%;
+.canteenListTop img{
+    width:300px;
     height:auto;
-    padding:10px 20px;
-    border:1px solid #d6d6d6;
-    margin-top:20px;
+    margin-right:20px;
 }
-.canteenmenuBox img{
-    width:200px;
-    max-height: 200px;
-}
-.canteenmenuBox>.left{
-    margin-right:10px;
-}
-.canteenmenuBox>.left > p {
-    margin-bottom:10px;
-}
-.canteenmenuName>span:nth-of-type(1){
-    font-size: 16px;
-    display: inline-block;
-    margin-right:15px;
-}
-.canteenmenuName>span:nth-of-type(2){
-    font-size: 18px;
-    color: #FF6715;
-}
-
 .canteenmenuBtn{
     width:120px;
     height:30px;
@@ -47,7 +18,62 @@
     text-align: center;
     line-height: 30px;
     cursor: pointer;
+    margin-top:30px;
 }
+.canteenListfraction{
+    font-size: 30px;
+    color: #FF6715;
+}
+.canteenListTop .left p{
+    line-height: 42px;
+}
+.canteenListCenter{
+    width:100%;
+    margin:50px auto;
+}
+.canteenListCenter textarea{
+    resize: none;
+    width:50%;
+    height: 150px;
+}
+.UpdataBtn{
+    width:120px;
+    height:30px;
+    -webkit-border-radius:6px;
+    -moz-border-radius:6px;
+    border-radius:6px;
+    text-align: center;
+    line-height: 30px;
+    cursor: pointer;
+    margin-top:20px;
+    border:1px solid #d6d6d6;
+}
+.UpdataBtn:hover{
+    background: #FF6715;
+    color: #fff;
+}
+.canteenListEva{
+    padding:20px 10px;
+    border-bottom:1px solid #d6d6d6;
+}
+.canteenListEvausername{
+    width:80px;
+    text-align: center;
+}
+.canteenListEvausername img{
+    width:20px;
+}
+.canteenListEvausername p{
+    margin-top:8px;
+}
+.canteenListEvauserword p{
+    line-height: 30px;
+}
+.canteenCenterStart{
+    margin-bottom:10px;
+    display: flex;
+}
+
 .Reserve{
     width:100%;
     height:100%;

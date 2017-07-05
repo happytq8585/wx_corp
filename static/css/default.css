@@ -4,6 +4,9 @@ body,html{
     font-family: "Microsoft YaHei UI";
     color: #333;
 }
+body {
+    padding-top: 70px;
+}
 p{
     padding:0;
     margin:0;
@@ -15,4 +18,26 @@ p{
 .LoginName{
     display: inline-block;
     margin-left:5px;
+}
+ul, ol, li {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+a {
+    text-decoration: none;
+}
+.BigBox{
+    width:1200px;
+    height:auto;
+    margin:50px auto;
+}
+.left{
+    float: left;  
+}
+.right{
+    float: right;
+}
+.clear{
+    clear: both;
 }

@@ -1,0 +1,25 @@
+.PersonalCenter{
+    width:80%;
+    margin:0 auto;
+}
+.PersonalCenterBox{
+    margin:30px;
+}
+.PersonalCenterBox div{
+    margin-bottom:20px;
+}
+.PersonalCenterBox span{
+    display: inline-block;
+    width:100px;
+    text-align: right;
+    margin-right:10px;
+}
+.PersonalCenterBox input{
+    width:220px;
+    height:32px;
+    font-size: 16px;
+}
+.PersonalCenterBox input[type="submit"]{
+    border:1px solid #d6d6d6;
+    background: #f2f2f2;
+}

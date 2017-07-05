@@ -1,0 +1,23 @@
+@charset "utf-8";
+/* CSS Document */
+
+h1,h2,h3,h4,h5,h6,form,ul,img{
+ margin:0;padding:0;border:0;
+}
+li{
+ list-style:none;
+}
+
+ul.Star{
+ display: inline-block;
+ height:18px;
+}
+ul.Star li{
+ float:left;margin-right:8px;margin-bottom:0;list-style:none;
+}
+ul.Star li span.Select{
+ float:left;display:block;
+}
+ul.Star li span.Select img{
+ vertical-align:middle;
+}

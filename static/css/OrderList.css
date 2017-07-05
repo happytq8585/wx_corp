@@ -1,0 +1,19 @@
+.OrderList{
+    width:80%;
+    margin:0 auto;
+}
+.OrderListBox{
+    margin:30px;
+}
+.OrderListBoxCenter{
+    border-bottom:1px solid #d6d6d6;
+    padding:20px 10px;
+}
+.OrderListBoxCenter img{
+    width:100px;
+}
+.OrderListBoxCenter span{
+    display: inline-block;
+    width:10%;
+    text-align: center;
+}
