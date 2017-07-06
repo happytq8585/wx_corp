@@ -1,5 +1,6 @@
 
 $(function () {
+        /*
     var dataArr = [{id:1,name:'凉拌三丝',title:'土豆、海带、细粉、蒜、葱、芥末',fraction:4.6,img:'img/97.jpg'},{id:2,name:'凉拌海带丝',title:'海带、蒜、葱、芥末',fraction:4.9,img:'img/97.jpg'}];
     var canteenList = '';
     dataArr.map(function (data,index) {
@@ -28,6 +29,7 @@ $(function () {
             '</div>'
     });
     $('.canteenLeft').append(canteenList);
+    */
     
     $('.item-curMonth').click('on',function () {
         var datatime = $('.item-selected').attr('data');

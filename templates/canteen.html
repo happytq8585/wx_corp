@@ -38,7 +38,7 @@
                         <li><a href="Orderlist.html">订单列表</a></li>
                     </ul>
                 </li>
-                <li><div class="Signout"><a src="/logout">退出</a></div></li>
+                <li><div class="Signout"><a href="/logout">退出</a></div></li>
             </ul>
 
         </div><!-- /.navbar-collapse -->
@@ -49,7 +49,31 @@
 <div class="BigBox Canteen">
     <h3>食堂菜谱</h3>
     <div class="canteenLeft left">
-
+        {% for e in arr %}
+            <div class="canteenmenuBox">
+                <div class="left">
+                    <a href="{{ e['pic_land'] }}">
+                    <img src="{{ e['pic_src'] }}" alt="pic">
+                    </a>
+                </div>
+                <div class="left">
+                    <p class="canteenmenuName">
+                        <span>{{ e['dish_name'] }}</span>
+                        <span>{{ e['average_score'] }}</span>
+                    </p>
+                    <p>
+                        <span>食材: </span>
+                        <span class="canteenmenuMaterial">{{ e['material'] }}</span>
+                    </p>
+                    <p></p>
+                    {% if e['order'] %}
+                        <div class="canteenmenuBtn" value="1">立即预订</div>
+                    {% end %}
+                    <p></p>
+                </div>
+                <div class="clear"></div>
+            </div>
+        {% end %}
     </div>
     <div class="canteenRight right">
         <div id="calendar" class="calendar"></div>

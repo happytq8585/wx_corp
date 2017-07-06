@@ -34,29 +34,33 @@ class Dish(Base):
 # 表的名字:
     __tablename__ = 'dish'
     def __init__(self, **arr):
-        self.id = arr['id']
-        self.name = arr['name']
-        self.pic_loc = arr['pic_loc']
-        self.time = arr['time']
-        self.one    = int(arr.get('one', '0'))
-        self.two    = int(arr.get('two', '0'))
-        self.three  = int(arr.get('three', '0'))
-        self.four   = int(arr.get('four', '0'))
-        self.five   = int(arr.get('five', '0'))
+        self.id             = arr['id']
+        self.name           = arr['name']
+        self.pic_loc        = arr['pic_loc']
+        self.time           = arr['time']
+        self.material       = arr.get('material', '')
+        self.can_order      = int(arr.get('can_order', '0'))
+        self.one            = int(arr.get('one', '0'))
+        self.two            = int(arr.get('two', '0'))
+        self.three          = int(arr.get('three', '0'))
+        self.four           = int(arr.get('four', '0'))
+        self.five           = int(arr.get('five', '0'))
 # 表的结构:
     #图片的id
-    id = Column(Integer, primary_key=True)
+    id          = Column(Integer, primary_key=True)
     #图片的名字
-    name = Column(String(128))
+    name        = Column(String(128))
     #图片存储的位置
-    pic_loc = Column(String(256))
+    pic_loc     = Column(String(256))
     #图片上传的时间
-    time  = Column(Date)
-    one   = Column(Integer)
-    two   = Column(Integer)
-    three = Column(Integer)
-    four  = Column(Integer)
-    five  = Column(Integer)
+    time        = Column(Date)
+    material    = Column(String(128))
+    can_order   = Column(Integer)
+    one         = Column(Integer)
+    two         = Column(Integer)
+    three       = Column(Integer)
+    four        = Column(Integer)
+    five        = Column(Integer)
 
 # 初始化数据库连接:
 engine = create_engine('mysql+mysqlconnector://root:@localhost:3306/wxcorp',encoding='utf-8')
@@ -85,15 +89,16 @@ def write_dish(**dic):
         session.add(d)
     session.commit()
     session.close()
+
 """
-查询指定日期的菜谱信息, 指定日期是yyyymmdd
+查询指定日期的菜谱信息, 指定日期是yyyy-mm-dd
 """
-def query_menu_list(timestamp):
+def query_dish_by_day(day):
     session = DBSession()
-    res = session.query(Dish).filter(Dish.time == timestamp).all()
+    res = session.query(Dish).filter(Dish.time == day).all()
     if not res:
         return []
-    data = [[str(e.name), str(e.pic_loc), "%4d%02d%02d"%(e.time.year, e.time.month, e.time.day), e.one, e.two, e.three, e.four, e.five] for e in res]
+    data = [[str(e.name), str(e.pic_loc), timestamp, e.material, e.can_order, e.one, e.two, e.three, e.four, e.five] for e in res]
     return data
 
 def regist_user(info):

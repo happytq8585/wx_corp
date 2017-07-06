@@ -8,11 +8,12 @@ import hashlib
 import os.path
 import json
 import time
+import datetime
 import re
 from tornado.web import StaticFileHandler
 from tornado.options import define, options
 
-from tables import query_user, write_dish, query_menu_list, regist_user
+from tables import query_user, write_dish, query_dish_by_day, regist_user
 from hostip import get_ip_address
 
 define("port", default=8000, help="run on the given port", type=int)
@@ -22,7 +23,7 @@ class BaseHandler(tornado.web.RequestHandler):
         return self.get_secure_cookie("username")
 
 class MenuHandler(BaseHandler):
-    #@tornado.web.authenticated
+    @tornado.web.authenticated
     def get(self):
         d = self.get_argument("day", None)
         t = time.localtime();
@@ -49,10 +50,10 @@ class MenuHandler(BaseHandler):
         print res
         self.render("menu.html", today=today, data=data, host_ip=hostip, username=uname)
 class UploadFileHandler(BaseHandler):
-    #@tornado.web.authenticated
+    @tornado.web.authenticated
     def get(self):
         self.render("up.html");
-    #@tornado.web.authenticated
+    @tornado.web.authenticated
     def post(self):
         if not os.path.exists("static/files"):
             os.makedirs("static/files");
@@ -86,22 +87,64 @@ class LoginHandler(tornado.web.RequestHandler):
         if not ret:
             self.render("failed_log.html")
         else:
-            self.set_secure_cookie("username", uname)
-            self.set_secure_cookie("role", "%d"%ret)
+            self.set_secure_cookie("username", uname, expires_days=None)
+            self.set_secure_cookie("role", "%d"%ret,  expires_days=None)
             self.redirect("/welcome")
 
 class WelcomeHandler(BaseHandler):
-    #@tornado.web.authenticated
+    @tornado.web.authenticated
     def get(self):
         uname = self.get_secure_cookie("username")
         self.render("begin.html", username=uname)
-
+'''
+@brief:  用户查看某一天的菜谱
+@param:  day= 空则取当天的菜谱 否则去具体的日期的菜谱
+@return: 返回具体某一天的菜谱列表
+         dish_name:       菜的名字
+         average_score:   菜的平均得分
+         material:        菜的食材
+         order:           菜是否可以预定 0=不可以 1=可以
+         pic_land:        点击菜图片的landing url, 显示该菜的详细情况
+         pic_src:         菜的图片的存放位置
+'''
 class CanteenIndexHandler(BaseHandler):
-    #@tornado.web.authenticated
+    @tornado.web.authenticated
     def get(self):
+        d = self.get_argument("day", None)
+        if not d:
+            now = datetime.datetime.now()
+            d = now.strftime('%Y-%m-%d')
+        r = query_dish_by_day(d)
+        a = []
+        for i in r:
+            e = {}
+            e['dish_name']        = i[0]
+            e['average_score']    = 4.6
+            e['material']         = i[3]
+            e['order']            = i[4]
+            e['pic_land']         = ''
+            e['pic_src']          = i[1]
+            a.append(e)
         uname = self.get_secure_cookie("username")
         role  = self.get_secure_cookie("role")
-        self.render("canteen.html", username=uname, role=role)
+        '''
+        e['dish_name']     = '凉拌三丝'
+        e['average_score'] = 4.6
+        e['material']      = '土豆、海带、细粉、蒜、葱、芥末'
+        e['order']         = 1
+        e['pic_land']      = ''
+        e['pic_src']       = 'img/97.jpg'
+        a.append(e)
+        e = {}
+        e['dish_name']     = '凉拌三丝111'
+        e['average_score'] = 4.9
+        e['material']      = '细粉、蒜、葱、芥末'
+        e['order']         = 0
+        e['pic_land']      = ''
+        e['pic_src']       = 'img/97.jpg'
+        a.append(e)
+        '''
+        self.render("canteen.html", username=uname, role=role, arr=a)
 
 class LogoutHandler(tornado.web.RequestHandler):
     def get(self):
