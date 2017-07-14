@@ -79,7 +79,7 @@ class IndexHandler(tornado.web.RequestHandler):
 
 class LoginHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render("login.html")
+        self.render("index.html")
     def post(self):
         uname = self.get_argument("username")
         upass = self.get_argument("password")
@@ -87,6 +87,7 @@ class LoginHandler(tornado.web.RequestHandler):
         if not ret:
             self.render("failed_log.html")
         else:
+            print(ret)
             self.set_secure_cookie("username", uname, expires_days=None)
             self.set_secure_cookie("role", "%d"%ret,  expires_days=None)
             self.redirect("/welcome")
@@ -126,7 +127,7 @@ class CanteenIndexHandler(BaseHandler):
             e['pic_src']          = i[1]
             a.append(e)
         uname = self.get_secure_cookie("username")
-        role  = self.get_secure_cookie("role")
+        role  = int(self.get_secure_cookie("role"))
         '''
         e['dish_name']     = '凉拌三丝'
         e['average_score'] = 4.6

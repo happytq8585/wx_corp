@@ -3,18 +3,21 @@ create table if not exists wxcorp_user
  id int unsigned primary key auto_increment,
  name varchar(64) not null,
  password varchar(1024) not null,
- role int unsigned default 100 /*1=admin   100=common user*/
+ role int unsigned default 100 /*0=总管理员  1=食堂管理员 2=其他管理员 100=common user*/
 )engine=InnoDB, charset=utf8;
 
-insert into wxcorp_user(id, name, password, role) values(1, "admin", "3c9909afec25354d551dae21590bb26e38d53f2173b8d3dc3eee4c047e7ab1c1eb8b85103e3be7ba613b31bb5c9c36214dc9f14a42fd7a2fdb84856bca5c44c2", 1);
+insert into wxcorp_user(id, name, password, role) values(1, "admin", "3c9909afec25354d551dae21590bb26e38d53f2173b8d3dc3eee4c047e7ab1c1eb8b85103e3be7ba613b31bb5c9c36214dc9f14a42fd7a2fdb84856bca5c44c2", 0);
+insert into wxcorp_user(id, name, password, role) values(2, "canteen_admin", "3c9909afec25354d551dae21590bb26e38d53f2173b8d3dc3eee4c047e7ab1c1eb8b85103e3be7ba613b31bb5c9c36214dc9f14a42fd7a2fdb84856bca5c44c2", 1);
+insert into wxcorp_user(id, name, password, role) values(3, "other_admin", "3c9909afec25354d551dae21590bb26e38d53f2173b8d3dc3eee4c047e7ab1c1eb8b85103e3be7ba613b31bb5c9c36214dc9f14a42fd7a2fdb84856bca5c44c2", 2);
 
+/*订单信息*/
 create table if not exists order_info
 (
  id int unsigned primary key auto_increment,
- user_id int unsigned not null,
- dish_id int unsigned not null,
- num     int unsigned not null,
- time date not null
+ user_id int unsigned not null, /*用户id*/
+ dish_id int unsigned not null, /*菜名id*/
+ num     int unsigned not null, /*数量*/
+ time date not null             /*下单时间*/
 ) engine=InnoDB, charset=utf8;
 
 /*菜的数据库表*/
