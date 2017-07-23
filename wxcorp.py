@@ -13,7 +13,7 @@ import re
 from tornado.web import StaticFileHandler
 from tornado.options import define, options
 
-from tables import query_user, write_dish, query_dish_by_day, regist_user
+from tables import query_user, write_dish, query_dish_by_day, regist_user, dish_delete
 from hostip import get_ip_address
 
 define("port", default=8000, help="run on the given port", type=int)
@@ -49,6 +49,7 @@ class MenuHandler(BaseHandler):
         res['data']      = data
         print res
         self.render("menu.html", today=today, data=data, host_ip=hostip, username=uname)
+
 class UploadFileHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
@@ -63,14 +64,16 @@ class UploadFileHandler(BaseHandler):
             os.makedirs(todaydir)
         upload_path = os.path.join(os.path.dirname(__file__), todaydir)
         file_metas  = self.request.files['file']
-        names = {}
-        for meta in file_metas:
-            filename = meta['filename']
-            names[filename] = todaydir + '/' +  filename + '\3' + timestamp
-            filepath = os.path.join(upload_path, filename)
-            with open(filepath, 'wb') as up:
-                up.write(meta['body'])
-        write_dish(**names)
+        meta = file_metas[0]
+        filename = meta['filename']
+        filename = todaydir + '/' +  filename
+        with open(filename, 'wb') as up:
+            up.write(meta['body'])
+        filename = filename + '\3' + timestamp
+        dish_name     = self.get_argument('dish_name')
+        dish_material = self.get_argument('dish_material')
+        dish_order    = self.get_argument('dish_order')
+        write_dish(filename, dish_name, dish_material, dish_order)
         self.write('上传成功!')
 
 class IndexHandler(tornado.web.RequestHandler):
@@ -125,6 +128,7 @@ class CanteenIndexHandler(BaseHandler):
             e['order']            = i[4]
             e['pic_land']         = ''
             e['pic_src']          = i[1]
+            e['id']               = i[-1]
             a.append(e)
         uname = self.get_secure_cookie("username")
         role  = int(self.get_secure_cookie("role"))
@@ -152,7 +156,14 @@ class LogoutHandler(tornado.web.RequestHandler):
         self.clear_cookie("username");
         self.clear_cookie("role");
         self.redirect("/")
-
+class DeleteHandler(tornado.web.RequestHandler):
+    #@tornado.web.authenticated
+    def get(self):
+        imgid = self.get_argument("id")
+        if not imgid:
+            self.write("id is invalid")
+        dish_delete(imgid)
+        self.write("OK!!!")
 if __name__ == "__main__":
     tornado.options.parse_command_line()
     settings = {
@@ -172,6 +183,7 @@ if __name__ == "__main__":
                (r'/welcome', WelcomeHandler),
                (r'/login', LoginHandler),
                (r'/up', UploadFileHandler),
+               (r'/delete', DeleteHandler),
                (r'/menu', MenuHandler),
                (r'/logout', LogoutHandler),
               ]

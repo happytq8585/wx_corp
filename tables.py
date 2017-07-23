@@ -81,12 +81,11 @@ def query_user(line):
 将上传的图片信息写入数据库，图片存放在本地服务器上
 一个图片对应一道菜
 """
-def write_dish(**dic):
+def write_dish(filename, dish_name, dish_material, dish_order):
     session = DBSession()
-    for e in dic:
-        [pic_loc, timestamp] = dic[e].split('\3')
-        d = Dish(id=0, name=e, pic_loc=pic_loc, time=timestamp)
-        session.add(d)
+    [pic_loc, timestamp] = filename.split('\3')
+    d = Dish(id=0, name=dish_name, pic_loc=pic_loc, time=timestamp, can_order=dish_order, material=dish_material)
+    session.add(d)
     session.commit()
     session.close()
 
@@ -98,8 +97,13 @@ def query_dish_by_day(day):
     res = session.query(Dish).filter(Dish.time == day).all()
     if not res:
         return []
-    data = [[str(e.name), str(e.pic_loc), timestamp, e.material, e.can_order, e.one, e.two, e.three, e.four, e.five] for e in res]
+    data = [[str(e.name), str(e.pic_loc), day, e.material, e.can_order, e.one, e.two, e.three, e.four, e.five, e.id] for e in res]
     return data
+
+def dish_delete(imgid):
+    session = DBSession()
+    res = session.query(Dish).filter(Dish.id == imgid).delete(synchronize_session=False)
+    session.commit()
 
 def regist_user(info):
     [uname, passwd] = info.split('\3');

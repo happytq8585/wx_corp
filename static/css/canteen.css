@@ -5,6 +5,7 @@
 .canteenLeft{
     width:65%;
     margin-top:30px;
+    text-align: center;
 }
 .canteenRight{
     width:35%;
@@ -20,11 +21,18 @@
     width:200px;
     max-height: 200px;
 }
+.canteenmenuBox .right img {
+    width: 20px;
+    cursor: pointer;
+}
 .canteenmenuBox>.left{
     margin-right:10px;
 }
 .canteenmenuBox>.left > p {
     margin-bottom:10px;
+}
+.right {
+    float: right;
 }
 .canteenmenuName>span:nth-of-type(1){
     font-size: 16px;

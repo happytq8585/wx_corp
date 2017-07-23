@@ -57,6 +57,17 @@ $(function () {
 
         console.log($('.ReserveBox').find('input').val());
     })
-
+    $('.img_close').click('on', function() {
+            var id = $(this).attr('id');
+            $.ajax({
+                url:"http://101.204.240.230:8000/delete",
+                type: "GET",
+                data: {"id":id},
+                success: function(para){
+                    alert(para);
+                }
+            }
+            );
+    })
     
 })
