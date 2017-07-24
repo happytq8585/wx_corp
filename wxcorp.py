@@ -115,6 +115,7 @@ class CanteenIndexHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         d = self.get_argument("day", None)
+        json = self.get_argument("json", None)
         if not d:
             now = datetime.datetime.now()
             d = now.strftime('%Y-%m-%d')
@@ -132,6 +133,14 @@ class CanteenIndexHandler(BaseHandler):
             a.append(e)
         uname = self.get_secure_cookie("username")
         role  = int(self.get_secure_cookie("role"))
+        if json:
+            ret = {}
+            ret['data'] = a
+            ret['username'] = uname
+            ret['role'] = role
+            self.write(ret)
+        else:
+            self.render("canteen.html", username=uname, role=role, arr=a)
         '''
         e['dish_name']     = '凉拌三丝'
         e['average_score'] = 4.6
@@ -149,15 +158,14 @@ class CanteenIndexHandler(BaseHandler):
         e['pic_src']       = 'img/97.jpg'
         a.append(e)
         '''
-        self.render("canteen.html", username=uname, role=role, arr=a)
 
 class LogoutHandler(tornado.web.RequestHandler):
     def get(self):
         self.clear_cookie("username");
         self.clear_cookie("role");
         self.redirect("/")
-class DeleteHandler(tornado.web.RequestHandler):
-    #@tornado.web.authenticated
+class DeleteHandler(BaseHandler):
+    @tornado.web.authenticated
     def get(self):
         imgid = self.get_argument("id")
         if not imgid:

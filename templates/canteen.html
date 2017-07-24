@@ -78,7 +78,7 @@
             </div>
         {% end %}
 {% if role == 1 %}
-    <form class="form-horizontal" role="form" enctype="multipart/form-data" method="post" action="/up">
+    <form display="none" class="form-horizontal" role="form" enctype="multipart/form-data" method="post" action="/up">
         {% raw xsrf_form_html() %}
         <div class="form-group">
             <label for="dish_name" class="col-sm-2 control-label">菜名</label>
@@ -115,7 +115,6 @@
             </div>
         </div>
     </form>
-        <img src="img/add.jpg">
     {% end %}
     </div>
     <div class="canteenRight right">

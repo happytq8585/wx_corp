@@ -30,13 +30,24 @@ $(function () {
     });
     $('.canteenLeft').append(canteenList);
     */
-    
-    $('.item-curMonth').click('on',function () {
+    function dayclick() {
         var datatime = $('.item-selected').attr('data');
          //日期数组【年，月，日】
-        var dataarr = [datatime.substring(0,4),datatime.substring(4,6),datatime.substring(6)];
-
-    });
+        var d = [datatime.substring(0,4),datatime.substring(4,6),datatime.substring(6)];
+        var day = d[0] + '-' + d[1] + '-' + d[2];
+        //window.location.href = "/canteen?day=" + day;
+        $(".canteenLeft").empty();
+        $.ajax({
+            url: "/canteen",
+            data: {"json":1},
+            type: "GET",
+            success: function(para) {
+                alert(para);
+            }
+        })
+    }
+    $('.item-curMonth').click('on',dayclick);
+    $('.item-curDay').click('on', dayclick);
     //打开预定弹窗
     var Reservenum ;
     $('.canteenmenuBtn').click('on',function () {
@@ -60,11 +71,13 @@ $(function () {
     $('.img_close').click('on', function() {
             var id = $(this).attr('id');
             $.ajax({
-                url:"http://101.204.240.230:8000/delete",
+                'Cookie': document.cookie,
+                url:"/delete",
                 type: "GET",
                 data: {"id":id},
                 success: function(para){
                     alert(para);
+                    window.location.reload();
                 }
             }
             );
