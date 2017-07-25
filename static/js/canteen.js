@@ -1,53 +1,117 @@
+function canteen_fill(day) {
+    $.ajax({
+        url: "/canteen",
+        data: {"json":1, "day":day},
+        type: "GET",
+        /*
+         average_score: 4.6
+         dish_name: "AAA"
+         id: 3
+         material: "AAA_material"
+         order: 0
+         pic_land: ""
+         pic_src: "static/files/20170723/3.jpeg"
+         */
+        success: function(para) {
+            var arr = para.data;
+            $('.canteenLeft').empty();
+            for (var i = 0; i < arr.length; ++i) {
+                var e   = arr[i];
+                var box = "<div class=\"canteenmenuBox\">"                           +
+                              "<div class=\"left\">"                                 +
+                                  "<a href=\"" + e['pic_land'] + "\">"               +
+                                  "<img src=\"" + e['pic_src'] + "\">"               +
+                                  "</a>"                                             +
+                              "</div>"                                               +
+                              "<div class=\"left\">"                                 +
+                                  "<p class=\"canteenmenuName\">"                    +
+                                    "<span>" + e['dish_name'] + "</span>"            +
+                                    "<span>" + e['average_score'] + "</span>"        +
+                                  "</p>"                                             +
+                                  "<p>"                                              +
+                                    "<span>食材: </span>"                            +
+                                    "<span class=\canteenmenuMaterial\">"            +
+                                          e['material'] + "</span>"                  +
+                                  "</p>"                                             +
+                                  "<p></p>"; 
+                if (e['order'] == 1) {
+                    box += "<div class=\"canteenmenuBtn\" value=\"1\">立即预定</div>";
+                }
+                box = box                                                            +
+                            "<p></p>"                                                +
+                              "</div>"                                               +
+                              "<div class=\"right\">"                                +
+                                "<img src=\"img/close.png\" class=\"img_close\""     +
+                                    "id=\"" + e['id'] + "\">"                        +
+                              "</div>"                                               +
+                              "<div class=\"clear\"></div>"                          +
+                          "</div>";
+                $('.canteenLeft').append(box);
+            }
+            if (para['role'] == 1) {
+                var form = 
+                    "<form display=\"none\" class=\"form-horizontal\" role=\"form\" enctype=\"multipart/form-data\" method=\"post\" action=\"/up\">"                              +
+                   // "{% raw xsrf_form_html() %}"                                       +
+                "<div class=\"form-group\">"                                           +
+                    "<label for=\"dish_name\" class=\"col-sm-2 control-label\">菜名</label>"
+                                                                                       +
+                    "<div class=\"col-sm-10\">"                                        +
+                    "<input type=\"text\" class=\"form-control\" name=\"dish_name\" placeholder=\"请输入名字\">"
+                                                                                       +
+                    "</div>"                                                           +
+                 "</div>"                                                              +
+                 "<div class=\"form-group\">"                                          +
+                    "<label for=\"material\" class=\"col-sm-2 control-label\">食材</label>"
+                                                                                       +
+                    "<div class=\"col-sm-10\">"                                        +
+                    "<input type=\"text\" class=\"form-control\" name=\"dish_material\" placeholder=\"请输入食材\">"
+                                                                                       +
+                    "</div>"                                                           +
+                 "</div>"                                                              +
+                 "<div class=\"form-group\">"                                          +
+                    "<label for=\"picture\" class=\"col-sm-2 control-label\">图片</label>" 
+                                                                                       +
+                    "<div class=\"col-sm-10\">"                                        +
+                    "<input type=\"file\" name=\"file\">"                              +
+                    "</div>"                                                           +
+                 "</div>"                                                              +
+                 "<div class=\"form-group\">"                                          +
+                    "<label for=\"choice\" class=\"col-sm-2 control-label\">是否可预订</label>"
+                                                                                       +
+                    "<div>"                                                            +
+                    "<label class=\"radio-inline\">"                                   +
+                    "<input type=\"radio\" name=\"dish_order\" id=\"optionsRadios3\" value=\"1\" checked>可以预订"                                                                +
+                    "</label>"                                                         +
+                    "<label class=\"radio-inline\">"                                   +
+                    "<input type=\"radio\" name=\"dish_order\" id=\"optionsRadios3\" value=\"0\" value=\"option2\">不可以预订"
+                                                                                       +
+                    "</label>"                                                         +
+                    "</div>"                                                           +
+                 "</div>"                                                              +
+                 "<div class=\"form-group\">"                                          +
+                    "<div class=\"col-sm-offset-2 col-sm-10\">"                        +
+                    "<input type=\"submit\" class=\"btn btn-default\">"                +
+                    "</div>"                                                           +
+                 "</div>"                                                              +
+             "</form>";
+                $('.canteenLeft').append(form);
+            }
+        }
+    });
+}
+function dayclick() {
+    var datatime = $('.item-selected').attr('data');
+     //日期数组【年，月，日】
+    var d = [datatime.substring(0,4),datatime.substring(4,6),datatime.substring(6)];
+    var day = d[0] + '-' + d[1] + '-' + d[2];
+    canteen_fill(day);
+}
 
 $(function () {
-        /*
-    var dataArr = [{id:1,name:'凉拌三丝',title:'土豆、海带、细粉、蒜、葱、芥末',fraction:4.6,img:'img/97.jpg'},{id:2,name:'凉拌海带丝',title:'海带、蒜、葱、芥末',fraction:4.9,img:'img/97.jpg'}];
-    var canteenList = '';
-    dataArr.map(function (data,index) {
-        console.log(data,index);
-        canteenList += '<div class="canteenmenuBox">'+
-            '<div class="left">'+
-            '<a href="canteenList.html">'+
-            '<img src='+data.img+' alt="">'+
-            '</a>'+
-            '</div>'+
-            '<div class="left">'+
-            '<p class="canteenmenuName">'+
-            ' <span>'+data.name+'</span>'+
-            '<span>'+data.fraction+'</span>'+
-            ' </p>'+
-            '<p> '+
-            '<span>食材：</span>'+
-            '<span class="canteenmenuMaterial">'+data.title+'</span>'+
-            '</p>'+
-
-        '<p> ' +
-            '<div class="canteenmenuBtn" value='+data.id+' >立即预定</div>'+
-            '</p>'+
-            '</div>'+
-            '<div class="clear"></div>' +
-            '</div>'
-    });
-    $('.canteenLeft').append(canteenList);
-    */
-    function dayclick() {
-        var datatime = $('.item-selected').attr('data');
-         //日期数组【年，月，日】
-        var d = [datatime.substring(0,4),datatime.substring(4,6),datatime.substring(6)];
-        var day = d[0] + '-' + d[1] + '-' + d[2];
-        //window.location.href = "/canteen?day=" + day;
-        $(".canteenLeft").empty();
-        $.ajax({
-            url: "/canteen",
-            data: {"json":1},
-            type: "GET",
-            success: function(para) {
-                alert(para);
-            }
-        })
-    }
     $('.item-curMonth').click('on',dayclick);
     $('.item-curDay').click('on', dayclick);
+    $('.item-curDay').trigger('click');
+
     //打开预定弹窗
     var Reservenum ;
     $('.canteenmenuBtn').click('on',function () {

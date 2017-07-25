@@ -54,7 +54,7 @@ class UploadFileHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         self.render("up.html");
-    @tornado.web.authenticated
+    #@tornado.web.authenticated
     def post(self):
         if not os.path.exists("static/files"):
             os.makedirs("static/files");

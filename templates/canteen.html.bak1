@@ -49,6 +49,73 @@
 <div class="BigBox Canteen">
     <h3>食堂菜谱</h3>
     <div class="canteenLeft left">
+        {% for e in arr %}
+            <div class="canteenmenuBox">
+                <div class="left">
+                    <a href="{{ e['pic_land'] }}">
+                    <img src="{{ e['pic_src'] }}" alt="pic">
+                    </a>
+                </div>
+                <div class="left">
+                    <p class="canteenmenuName">
+                        <span>{{ e['dish_name'] }}</span>
+                        <span>{{ e['average_score'] }}</span>
+                    </p>
+                    <p>
+                        <span>食材: </span>
+                        <span class="canteenmenuMaterial">{{ e['material'] }}</span>
+                    </p>
+                    <p></p>
+                    {% if e['order'] %}
+                        <div class="canteenmenuBtn" value="1">立即预订</div>
+                    {% end %}
+                    <p></p>
+                </div>
+                <div class="right">
+                    <img src="img/close.png" class="img_close" id="{{ e['id'] }}">
+                </div>
+                <div class="clear"></div>
+            </div>
+        {% end %}
+{% if role == 1 %}
+    <form display="none" class="form-horizontal" role="form" enctype="multipart/form-data" method="post" action="/up">
+        {% raw xsrf_form_html() %}
+        <div class="form-group">
+            <label for="dish_name" class="col-sm-2 control-label">菜名</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="dish_name" placeholder="请输入名字">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="material" class="col-sm-2 control-label">食材</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="dish_material" placeholder="请输入食材">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="picture" class="col-sm-2 control-label">图片</label>
+            <div class="col-sm-10">
+                <input type="file" name="file">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="choice" class="col-sm-2 control-label">是否可预订</label>
+            <div>
+                <label class="radio-inline">
+                    <input type="radio" name="dish_order" id="optionsRadios3" value="1" checked>可以预订
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="dish_order" id="optionsRadios3" value="0" value="option2">不可以预订
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <input type="submit" class="btn btn-default">
+            </div>
+        </div>
+    </form>
+    {% end %}
     </div>
     <div class="canteenRight right">
         <div id="calendar" class="calendar"></div>
