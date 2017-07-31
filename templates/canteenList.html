@@ -13,7 +13,7 @@
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">中国人名银行</a>
+            <a class="navbar-brand" href="#">XX单位</a>
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
@@ -37,14 +37,31 @@
                         <li><a href="Orderlist.html">订单列表</a></li>
                     </ul>
                 </li>
-                <li><div class="Signout">退出</div></li>
+                <li><div class="Signout"><a href="/logout">退出</a></div></li>
             </ul>
         </div><!-- /.navbar-collapse -->
 
     </div><!-- /.container-fluid -->
 </nav>
     <div class="canteenList">
-
+        <div class="canteenListTop">
+            <div class="left">
+                <img src="{{ R['pic_src'] }}" alt="">
+            </div>
+            <div class="left">
+                <h4>{{ R['dish_name'] }}</h4>
+                <p>
+                    综合评分: <span class="canteenListfraction">{{ R['average_score'] }} </span>
+                </p>
+                <p>
+                    <span>食材: </span>{{ R['material'] }}
+                </p>
+            {% if R['order'] == 1 %}
+                <div class="canteenmenuBtn">立即预定</div>
+            {% end %}
+            </div>
+            <div class="clear"></div>
+        </div>
         <div class="canteenListCenter">
             <div class="canteenCenterStart">
                 <input style="display:none" id="rating" name="serving" value="0" type="txt">
@@ -52,15 +69,15 @@
                 <ul class="Star">
                     <li>
                     <span class="Select">
-                        <a onMouseOver="javascript:setProfix('star_');showStars(1,'rating');" onMouseOut="javascript:setProfix('star_');clearStars('rating');" href="javascript:setProfix('star_');setStars(1,'rating');">
+                        <a class="star" onMouseOver="javascript:setProfix('star_');showStars(1,'rating');" onMouseOut="javascript:setProfix('star_');clearStars('rating');" href="javascript:setProfix('star_');setStars(1,'rating');">
                             <img id="star_1" title="差(1)" src="img/icon_star_1.gif"></a>
-                        <a onMouseOver="javascript:setProfix('star_');showStars(2,'rating');"onMouseOut="javascript:setProfix('star_');clearStars('rating');" href="javascript:setProfix('star_');setStars(2,'rating');">
+                        <a class="star" onMouseOver="javascript:setProfix('star_');showStars(2,'rating');"onMouseOut="javascript:setProfix('star_');clearStars('rating');" href="javascript:setProfix('star_');setStars(2,'rating');">
                             <img id="star_2" title="一般(2)" src="img/icon_star_1.gif"></a>
-                        <a onMouseOver="javascript:setProfix('star_');showStars(3,'rating');"onMouseOut="javascript:setProfix('star_');clearStars('rating');" href="javascript:setProfix('star_');setStars(3,'rating');">
+                        <a class="star" onMouseOver="javascript:setProfix('star_');showStars(3,'rating');"onMouseOut="javascript:setProfix('star_');clearStars('rating');" href="javascript:setProfix('star_');setStars(3,'rating');">
                             <img id="star_3" title="好(3)" src="img/icon_star_1.gif"></a>
-                        <a onMouseOver="javascript:setProfix('star_');showStars(4,'rating');" onMouseOut="javascript:setProfix('star_');clearStars('rating');" href="javascript:setProfix('star_');setStars(4,'rating');">
+                        <a class="star" onMouseOver="javascript:setProfix('star_');showStars(4,'rating');" onMouseOut="javascript:setProfix('star_');clearStars('rating');" href="javascript:setProfix('star_');setStars(4,'rating');">
                             <img id="star_4" title="很好(4)" src="img/icon_star_1.gif"></a>
-                        <a onMouseOver="javascript:setProfix('star_');showStars(5,'rating');" onMouseOut="javascript:setProfix('star_');clearStars('rating');" href="javascript:setProfix('star_');setStars(5,'rating');">
+                        <a class="star" onMouseOver="javascript:setProfix('star_');showStars(5,'rating');" onMouseOut="javascript:setProfix('star_');clearStars('rating');" href="javascript:setProfix('star_');setStars(5,'rating');">
                             <img id="star_5" title="非常好(5)" src="img/icon_star_1.gif"></a>
                     </span>
                     </li>
@@ -85,7 +102,7 @@
 
 
 </body>
-<script src="js/jquery-1.12.1.js"></script>
+<script src="js/jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/default.js"></script>
 <script src="js/star.js"></script>

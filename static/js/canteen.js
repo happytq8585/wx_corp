@@ -3,23 +3,19 @@ function canteen_fill(day) {
         url: "/canteen",
         data: {"json":1, "day":day},
         type: "GET",
-        /*
-         average_score: 4.6
-         dish_name: "AAA"
-         id: 3
-         material: "AAA_material"
-         order: 0
-         pic_land: ""
-         pic_src: "static/files/20170723/3.jpeg"
-         */
         success: function(para) {
             var arr = para.data;
             $('.canteenLeft').empty();
             for (var i = 0; i < arr.length; ++i) {
                 var e   = arr[i];
+                var loc = "/canteenItem?pic_src=" + e['pic_src'] + "&"               +
+                          "dish_name=" + e['dish_name'] + "&"                        +
+                          "average_score=" + e['average_score'] + "&"                +
+                          "material=" + e['material'] + "&"                          +
+                          "order=" + e['order'];
                 var box = "<div class=\"canteenmenuBox\">"                           +
                               "<div class=\"left\">"                                 +
-                                  "<a href=\"" + e['pic_land'] + "\">"               +
+                                  "<a href=\"" + loc  + "\">"                        +
                                   "<img src=\"" + e['pic_src'] + "\">"               +
                                   "</a>"                                             +
                               "</div>"                                               +

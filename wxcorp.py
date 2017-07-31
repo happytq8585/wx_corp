@@ -54,7 +54,7 @@ class UploadFileHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         self.render("up.html");
-    #@tornado.web.authenticated
+    @tornado.web.authenticated
     def post(self):
         if not os.path.exists("static/files"):
             os.makedirs("static/files");
@@ -141,24 +141,20 @@ class CanteenIndexHandler(BaseHandler):
             self.write(ret)
         else:
             self.render("canteen.html", username=uname, role=role, arr=a)
-        '''
-        e['dish_name']     = '凉拌三丝'
-        e['average_score'] = 4.6
-        e['material']      = '土豆、海带、细粉、蒜、葱、芥末'
-        e['order']         = 1
-        e['pic_land']      = ''
-        e['pic_src']       = 'img/97.jpg'
-        a.append(e)
-        e = {}
-        e['dish_name']     = '凉拌三丝111'
-        e['average_score'] = 4.9
-        e['material']      = '细粉、蒜、葱、芥末'
-        e['order']         = 0
-        e['pic_land']      = ''
-        e['pic_src']       = 'img/97.jpg'
-        a.append(e)
-        '''
+'''
+'''
+class CanteenItemHandler(BaseHandler):
+    def get(self):
+        r                 = {}
+        r['dish_name']    = self.get_argument('dish_name', '')
+        r['pic_src']      = self.get_argument('pic_src',   '')
+        r['order']        = int(self.get_argument('order', 0))
+        r['material']     = self.get_argument('material', '')
+        r['average_score']= self.get_argument('average_score', 0)
 
+        self.render("canteenList.html", R=r)
+    def post(self):
+        pass
 class LogoutHandler(tornado.web.RequestHandler):
     def get(self):
         self.clear_cookie("username");
@@ -187,6 +183,7 @@ if __name__ == "__main__":
                (r"/js/(.*)", StaticFileHandler, {"path": "static/js"}),  
                (r"/img/(.*)", StaticFileHandler, {"path": "static/img"}), 
                (r'/canteen', CanteenIndexHandler),
+               (r'/canteenItem', CanteenItemHandler),
                (r'/', IndexHandler),
                (r'/welcome', WelcomeHandler),
                (r'/login', LoginHandler),

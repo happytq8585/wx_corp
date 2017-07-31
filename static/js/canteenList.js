@@ -1,23 +1,5 @@
 
 $(function () {
-    var food = {name:'凉拌三丝',title:'土豆、海带、细粉、蒜、葱、芥末',fraction:4.6,img:'img/97.jpg'}
-    var foodhtml = '<div class="canteenListTop">'+
-        '<div class="left">'+
-        '<img src='+food.img+' alt="">'+
-        '</div>'+
-        '<div class="left">'+
-        '<h4>'+food.name+'</h4>'+
-        '<p>综合评分:'+
-        '<span class="canteenListfraction" >'+food.fraction+'</span>'+
-        '</p>'+
-        '<p> '+
-        '<span>食材:</span> '+food.title+' </p>'+
-        '<div class="canteenmenuBtn">立即预定</div>'+
-        '</div>'+
-        '<div class="clear"></div>'+
-        '</div>';
-    $('.canteenList').prepend(foodhtml);
-
 
     var evaluatearr = [{id:1,username:'用户名',fraction:4.6,evaluate:'菜色很好，量也很足，很好',img:'img/username.png'},{id:2,username:'用户名2',fraction:4.7,evaluate:'菜色很好，量也很足',img:'img/username.png'}];
     var evaluateHtml = "";
@@ -59,7 +41,10 @@ $(function () {
     $('.UpdataBtn').click('on',function () {
         var start = $('#rating').val(); //评论星星的数量；
         var words = $('#evaluate').val() //评论文字的内容；
-      
+        $(".star").removeAttr("onMouseOver");
+        $(".star").removeAttr("onMouseOut");
+        $(".star").attr("href", "");
+        alert("OK");
     })
 
 
