@@ -39,12 +39,23 @@ $(function () {
 
     //提交评论
     $('.UpdataBtn').click('on',function () {
-        var start = $('#rating').val(); //评论星星的数量；
+        var star  = $('#rating').val(); //评论星星的数量；
         var words = $('#evaluate').val() //评论文字的内容；
         $(".star").removeAttr("onMouseOver");
         $(".star").removeAttr("onMouseOut");
         $(".star").attr("href", "");
-        alert("OK");
+        var id = $("img").attr("id");
+        $.ajax({
+            'Cookie': document.cookie,
+            url:"/comment",
+            type: "POST",
+            data: {"id":id, "star":int(star), "words":words},
+            success: function(para) {
+                alert("comment success!");
+                window.location.reload();
+            }
+        });
+        //alert("OK");
     })
 
 

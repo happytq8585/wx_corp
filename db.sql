@@ -40,9 +40,9 @@ create table if not exists dish
 create table if not exists dish_comment
 (
  id int unsigned primary key auto_increment,
- dish_id int unsigned not null,       /*菜的id*/
- user_id int unsigned not null,       /*用户的id*/
- starts  int unsigned default 1,      /*用户对该菜评价了几颗星*/
- time date not null,                  /*评论的时间*/
- content varchar(512)                 /*评价的内容*/
+ dish_id int unsigned not null,                /*菜的id*/
+ user_id int unsigned not null,                /*用户的id*/
+ stars  int unsigned default 1,                /*用户对该菜评价了几颗星*/
+ time timestamp default CURRENT_TIMESTAMP,     /*评论的时间*/
+ content varchar(512)                          /*评价的内容*/
 ) engine=InnoDB, charset=utf8;

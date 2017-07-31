@@ -92,7 +92,8 @@ class LoginHandler(tornado.web.RequestHandler):
         else:
             print(ret)
             self.set_secure_cookie("username", uname, expires_days=None)
-            self.set_secure_cookie("role", "%d"%ret,  expires_days=None)
+            self.set_secure_cookie("role", "%d"%ret[0],  expires_days=None)
+            self.set_secure_cookie("userid", "%d"%int(ret[1]), expires_days=None)
             self.redirect("/welcome")
 
 class WelcomeHandler(BaseHandler):
@@ -151,6 +152,7 @@ class CanteenItemHandler(BaseHandler):
         r['order']        = int(self.get_argument('order', 0))
         r['material']     = self.get_argument('material', '')
         r['average_score']= self.get_argument('average_score', 0)
+        r['id']           = int(self.get_argument('id', 0))
 
         self.render("canteenList.html", R=r)
     def post(self):
@@ -168,6 +170,23 @@ class DeleteHandler(BaseHandler):
             self.write("id is invalid")
         dish_delete(imgid)
         self.write("OK!!!")
+class CommentHandler(BaseHandler):
+    @tornado.web.authenticated
+    def post(self):
+        dish_id        = self.get_argument("id", None)
+        star           = self.get_argument("star", None)
+        words          = self.get_argument("words", None)
+        userid         = self.get_secure_cookie("userid")
+        if not dish_id:
+            self.write({"code":-1, "reason": "dish id is invalid"})
+        if not star:
+            self.write({"code":-1, "reason": "star number is invalid"})
+        if not words:
+            self.write({"code":-1, "reason": "comments is null"})
+        ret = write_comment(userid, dish_id, star, words)
+        if not ret:
+            self.write({"code":-1, "reason": "write failed!"})
+        self.write({"code":0, "reason": "success"})
 if __name__ == "__main__":
     tornado.options.parse_command_line()
     settings = {
@@ -184,6 +203,7 @@ if __name__ == "__main__":
                (r"/img/(.*)", StaticFileHandler, {"path": "static/img"}), 
                (r'/canteen', CanteenIndexHandler),
                (r'/canteenItem', CanteenItemHandler),
+               (r'/comment', CommentHandler),
                (r'/', IndexHandler),
                (r'/welcome', WelcomeHandler),
                (r'/login', LoginHandler),

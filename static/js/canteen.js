@@ -12,7 +12,8 @@ function canteen_fill(day) {
                           "dish_name=" + e['dish_name'] + "&"                        +
                           "average_score=" + e['average_score'] + "&"                +
                           "material=" + e['material'] + "&"                          +
-                          "order=" + e['order'];
+                          "order=" + e['order'] + "&"                                +
+                          "id=" + e['id'];
                 var box = "<div class=\"canteenmenuBox\">"                           +
                               "<div class=\"left\">"                                 +
                                   "<a href=\"" + loc  + "\">"                        +
