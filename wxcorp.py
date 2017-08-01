@@ -14,6 +14,7 @@ from tornado.web import StaticFileHandler
 from tornado.options import define, options
 
 from tables import query_user, write_dish, query_dish_by_day, regist_user, dish_delete
+from tables import query_comments_by_id
 from hostip import get_ip_address
 
 define("port", default=8000, help="run on the given port", type=int)
@@ -153,8 +154,10 @@ class CanteenItemHandler(BaseHandler):
         r['material']     = self.get_argument('material', '')
         r['average_score']= self.get_argument('average_score', 0)
         r['id']           = int(self.get_argument('id', 0))
-
-        self.render("canteenList.html", R=r)
+        res               = query_comments_by_id(r['id'])#根据菜的id查询它的评论
+        c                 = [{'id':e.id, 'user_id':e.user_id, 'stars':e.stars,
+                              'time':e.time, 'content':e.content} for e in res] 
+        self.render("canteenList.html", R=r, C=c)
     def post(self):
         pass
 class LogoutHandler(tornado.web.RequestHandler):

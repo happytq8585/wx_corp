@@ -112,6 +112,17 @@ def write_dish(filename, dish_name, dish_material, dish_order):
 """
 def write_comment(userid, dish_id, star, words):
     session = DBSession()
+    c = Comment(0, dish_id, userid, star, words)
+    session.add(c)
+    session.commit()
+    session.close()
+"""
+查询菜的评论
+"""
+def query_comments_by_id(dish_id):
+    session = DBSession()
+    c       = session.query(Comment).filter(Comment.dish_id == dish_id).all()
+    return c
 """
 查询指定日期的菜谱信息, 指定日期是yyyy-mm-dd
 """

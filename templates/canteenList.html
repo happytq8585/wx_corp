@@ -87,7 +87,19 @@
             <div class="UpdataBtn">提交评论</div>
         </div>
         <div class="canteenListBottom">
-
+            {% for e in C %}
+                <div class="canteenListEva">
+                    <div class="left canteenListEvausername">
+                        <img src='img/username.png' alt="">
+                        <p>{{ e['user_id'] }}</p>
+                    </div>
+                    <div class="left canteenListEvauserword">
+                        <p>评分:<span>{{ e['score'] }} </span></p>
+                        <p>评论：<span>{{ e['content'] }} </span></p>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            {% end %}
         </div>
     </div>
 

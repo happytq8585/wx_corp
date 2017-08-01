@@ -39,8 +39,8 @@ $(function () {
 
     //提交评论
     $('.UpdataBtn').click('on',function () {
-        var star  = $('#rating').val(); //评论星星的数量；
-        var words = $('#evaluate').val() //评论文字的内容；
+        var star  = $('#rating').val();   //评论星星的数量；
+        var words = $('#evaluate').val(); //评论文字的内容；
         $(".star").removeAttr("onMouseOver");
         $(".star").removeAttr("onMouseOut");
         $(".star").attr("href", "");
@@ -49,7 +49,7 @@ $(function () {
             'Cookie': document.cookie,
             url:"/comment",
             type: "POST",
-            data: {"id":id, "star":int(star), "words":words},
+            data: {"id":id, "star":parseInt(star), "words":words, "_xsrf":xsrf},
             success: function(para) {
                 alert("comment success!");
                 window.location.reload();
