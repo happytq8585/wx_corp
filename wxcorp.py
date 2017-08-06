@@ -59,7 +59,12 @@ class UploadFileHandler(BaseHandler):
     def post(self):
         if not os.path.exists("static/files"):
             os.makedirs("static/files");
-        timestamp = time.strftime("%Y%m%d", time.localtime());
+        day = self.get_argument("day", None)
+        if not day:
+            timestamp = time.strftime("%Y%m%d", time.localtime())
+        else:
+            arr = [int(e) for e in day.split('-')]
+            timestamp = "%4d%02d%02d"%(arr[0], arr[1], arr[2])
         todaydir = "static/files/" + timestamp
         if not os.path.exists(todaydir):
             os.makedirs(todaydir)

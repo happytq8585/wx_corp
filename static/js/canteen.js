@@ -1,3 +1,32 @@
+function close_click()
+{
+    var id = $(this).attr('id');
+    $.ajax({
+            'Cookie': document.cookie,
+            url:"/delete",
+            type: "GET",
+            data: {"id":id},
+            success: function(para){
+                alert(para);
+                window.location.reload();
+            }
+    });
+}
+function get_cookie_by_name(name)
+{
+    var start = document.cookie.indexOf(name);
+    if (start != -1) {
+        var res = "";
+        var end  = document.cookie.indexOf(";", start+1);
+        if (end == -1) {
+            res = document.cookie.substring(start+name.length+1);
+        } else {
+            res = document.cookie.substring(start+name.length+1, end);
+        }
+        return res;
+    }
+    return "";
+}
 function canteen_fill(day) {
     $.ajax({
         url: "/canteen",
@@ -45,10 +74,23 @@ function canteen_fill(day) {
                           "</div>";
                 $('.canteenLeft').append(box);
             }
+            $(".img_close").bind("click", close_click);
             if (para['role'] == 1) {
+                var xsrf = get_cookie_by_name("_xsrf");
+                var day  =  get_click_day();
                 var form = 
                     "<form display=\"none\" class=\"form-horizontal\" role=\"form\" enctype=\"multipart/form-data\" method=\"post\" action=\"/up\">"                              +
                    // "{% raw xsrf_form_html() %}"                                       +
+                "<div class=\"form-group\">"                                           +
+                    "<div class=\"col-sm-10\">"                                        +
+                    "<input type=\"hidden\" class=\"form-control\" name=\"day\"  value=\"" + day + "\">" +
+                    "</div>"                                                           +
+                "</div>"  +
+                "<div class=\"form-group\">"                                           +
+                    "<div class=\"col-sm-10\">"                                        +
+                    "<input type=\"hidden\" class=\"form-control\" name=\"_xsrf\"  value=\""  + xsrf + "\">" +
+                    "</div>"                                                           +
+                "</div>"  +
                 "<div class=\"form-group\">"                                           +
                     "<label for=\"dish_name\" class=\"col-sm-2 control-label\">菜名</label>"
                                                                                        +
@@ -96,11 +138,15 @@ function canteen_fill(day) {
         }
     });
 }
-function dayclick() {
+function get_click_day() {
     var datatime = $('.item-selected').attr('data');
      //日期数组【年，月，日】
     var d = [datatime.substring(0,4),datatime.substring(4,6),datatime.substring(6)];
     var day = d[0] + '-' + d[1] + '-' + d[2];
+    return day;
+}
+function dayclick() {
+    var day = get_click_day();
     canteen_fill(day);
 }
 
@@ -129,19 +175,5 @@ $(function () {
 
         console.log($('.ReserveBox').find('input').val());
     })
-    $('.img_close').click('on', function() {
-            var id = $(this).attr('id');
-            $.ajax({
-                'Cookie': document.cookie,
-                url:"/delete",
-                type: "GET",
-                data: {"id":id},
-                success: function(para){
-                    alert(para);
-                    window.location.reload();
-                }
-            }
-            );
-    })
-    
+    $(".img_close").bind("click", close_click);
 })
