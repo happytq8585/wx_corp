@@ -1,4 +1,18 @@
-
+function get_cookie_by_name(name)
+{
+    var start = document.cookie.indexOf(name);
+    if (start != -1) {
+        var res = "";
+        var end  = document.cookie.indexOf(";", start+1);
+        if (end == -1) {
+            res = document.cookie.substring(start+name.length+1);
+        } else {
+            res = document.cookie.substring(start+name.length+1, end);
+        }
+        return res;
+    }
+    return "";
+}
 $(function () {
 
     var evaluatearr = [{id:1,username:'用户名',fraction:4.6,evaluate:'菜色很好，量也很足，很好',img:'img/username.png'},{id:2,username:'用户名2',fraction:4.7,evaluate:'菜色很好，量也很足',img:'img/username.png'}];
@@ -45,10 +59,11 @@ $(function () {
         $(".star").removeAttr("onMouseOut");
         $(".star").attr("href", "");
         var id = $("img").attr("id");
+        var xsrf = get_cookie_by_name("_xsrf");
         $.ajax({
             'Cookie': document.cookie,
             url:"/comment",
-            type: "POST",
+            type: "GET",
             data: {"id":id, "star":parseInt(star), "words":words, "_xsrf":xsrf},
             success: function(para) {
                 alert("comment success!");

@@ -52,7 +52,6 @@ function canteen_fill(day) {
                               "<div class=\"left\">"                                 +
                                   "<p class=\"canteenmenuName\">"                    +
                                     "<span>" + e['dish_name'] + "</span>"            +
-                                    "<span>" + e['average_score'] + "</span>"        +
                                   "</p>"                                             +
                                   "<p>"                                              +
                                     "<span>食材: </span>"                            +

@@ -14,7 +14,7 @@ from tornado.web import StaticFileHandler
 from tornado.options import define, options
 
 from tables import query_user, write_dish, query_dish_by_day, regist_user, dish_delete
-from tables import query_comments_by_id
+from tables import query_comments_by_id, write_comment
 from hostip import get_ip_address
 
 define("port", default=8000, help="run on the given port", type=int)
@@ -149,6 +149,7 @@ class CanteenIndexHandler(BaseHandler):
         else:
             self.render("canteen.html", username=uname, role=role, arr=a)
 '''
+dish图片的landing page处理
 '''
 class CanteenItemHandler(BaseHandler):
     def get(self):
@@ -162,7 +163,17 @@ class CanteenItemHandler(BaseHandler):
         res               = query_comments_by_id(r['id'])#根据菜的id查询它的评论
         c                 = [{'id':e.id, 'user_id':e.user_id, 'stars':e.stars,
                               'time':e.time, 'content':e.content} for e in res] 
-        self.render("canteenList.html", R=r, C=c)
+        s = 0
+        for e in res:
+            s = s + e.stars
+        r['average_score'] = 1 if s == 0 else (int(s/len(res)))
+        userid = int(self.get_secure_cookie("userid"))
+        user_comment = None
+        for e in res:
+            if e.user_id == userid:
+                user_comment = e
+                break
+        self.render("canteenList.html", R=r, C=c, user_comment=user_comment)
     def post(self):
         pass
 class LogoutHandler(tornado.web.RequestHandler):
@@ -180,7 +191,7 @@ class DeleteHandler(BaseHandler):
         self.write("OK!!!")
 class CommentHandler(BaseHandler):
     @tornado.web.authenticated
-    def post(self):
+    def get(self):
         dish_id        = self.get_argument("id", None)
         star           = self.get_argument("star", None)
         words          = self.get_argument("words", None)
@@ -194,7 +205,7 @@ class CommentHandler(BaseHandler):
         ret = write_comment(userid, dish_id, star, words)
         if not ret:
             self.write({"code":-1, "reason": "write failed!"})
-        self.write({"code":0, "reason": "success"})
+        self.write("success")
 if __name__ == "__main__":
     tornado.options.parse_command_line()
     settings = {

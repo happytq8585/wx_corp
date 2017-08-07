@@ -95,7 +95,7 @@ def query_user(line):
     res = session.query(User.name, User.password, User.role, User.id).filter(User.name==name, User.password==sha512).first()
     if not res:
         return None
-    return [res[2], res[-1]]
+    return [res[2], res[-1]]#[role, id]
 """
 将上传的图片信息写入数据库，图片存放在本地服务器上
 一个图片对应一道菜
@@ -154,6 +154,4 @@ def regist_user(info):
     return 1#name duplicated
 
 if __name__ == "__main__":
-    t = time.localtime();
-    timestamp = time.strftime("%Y-%m-%d %H:%M:%S", t)
-    print(timestamp)
+    pass

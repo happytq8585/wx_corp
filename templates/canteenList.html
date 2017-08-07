@@ -13,7 +13,7 @@
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">XX单位</a>
+            <a class="navbar-brand" href="/welcome">XX单位</a>
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
@@ -24,10 +24,10 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="canteen.html">食堂智能服务 <span class="sr-only">(current)</span></a></li>
-                <li><a href="meeting.html">会议智能服务</a></li>
-                <li><a href="property.html">物业智能服务</a></li>
-                <li><a href="notice.html">公告及调查问卷</a></li>
+                <li class="active"><a href="/canteen">食堂智能服务 <span class="sr-only">(current)</span></a></li>
+                <li><a href="/meeting">会议智能服务</a></li>
+                <li><a href="/property">物业智能服务</a></li>
+                <li><a href="/notice">公告及调查问卷</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
@@ -67,6 +67,7 @@
                 <input style="display:none" id="rating" name="serving" value="0" type="txt">
                 <span>评价：</span>
                 <ul class="Star">
+                {% if not user_comment %}
                     <li>
                     <span class="Select">
                         <a class="star" onMouseOver="javascript:setProfix('star_');showStars(1,'rating');" onMouseOut="javascript:setProfix('star_');clearStars('rating');" href="javascript:setProfix('star_');setStars(1,'rating');">
@@ -81,10 +82,20 @@
                             <img id="star_5" title="非常好(5)" src="img/icon_star_1.gif"></a>
                     </span>
                     </li>
+                {% else %}
+                    {% for i in xrange(R['average_score']) %}
+                        <li><img src="img/icon_star_2.gif"></li>
+                    {% end %}
+                    {% for i in xrange(5-R['average_score']) %}
+                        <li><img src="img/icon_star_1.gif"></li>
+                    {% end %}
+                {% end %}
                 </ul>
             </div>
+            {% if not user_comment %}
             <textarea name="evaluate" id="evaluate" cols="30" rows="10" placeholder="最多可输入200字~" maxlength="200"></textarea>
             <div class="UpdataBtn">提交评论</div>
+            {% end %}
         </div>
         <div class="canteenListBottom">
             {% for e in C %}
@@ -94,7 +105,7 @@
                         <p>{{ e['user_id'] }}</p>
                     </div>
                     <div class="left canteenListEvauserword">
-                        <p>评分:<span>{{ e['score'] }} </span></p>
+                        <p>评分:<span>{{ e['stars']}}</span></p>
                         <p>评论：<span>{{ e['content'] }} </span></p>
                     </div>
                     <div class="clear"></div>
@@ -107,7 +118,7 @@
     <div class="ReserveBox">
         <p> 预定 <img src="img/close.png" class="ReserveClose" alt=""> </p>
         <div>时间：<span>2017.07.04</span></div>
-        <div>份数：<input type="number"></div>
+        <div>份数：<input type="number" min=1 max=1000></div>
         <div class="ReserveBtn">确定</div>
     </div>
 </div>
