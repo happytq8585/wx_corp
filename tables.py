@@ -81,6 +81,24 @@ class Comment(Base):
     stars       = Column(Integer)
     time        = Column(TIMESTAMP)
     content     = Column(String(512))
+
+class Order(Base):
+    __tablename__ = "order_info"
+    def __init__(self, id_, uid, uname, did, dname, num):
+        self.id            = id_
+        self.user_id       = uid
+        self.user_name     = uname
+        self.dish_id       = did
+        self.dish_name     = dname
+        self.num           = num
+    id          = Column(Integer, primary_key=True)
+    user_id     = Column(Integer)
+    user_name   = Column(String(64))
+    dish_id     = Column(Integer)
+    dish_name   = Column(String(64))
+    num         = Column(Integer)
+    time        = Column(TIMESTAMP)
+
 # 初始化数据库连接:
 engine = create_engine('mysql+mysqlconnector://root:@localhost:3306/wxcorp',encoding='utf-8')
 # 创建DBSession类型:
@@ -116,6 +134,17 @@ def write_comment(userid, dish_id, star, words):
     session.add(c)
     session.commit()
     session.close()
+    return True
+"""
+将预订信息写入数据库
+"""
+def write_order(userid, username, dish_id, dish_name, num):
+    session = DBSession()
+    o = Order(0, userid, username, dish_id, dish_name, num)
+    session.add(o)
+    session.commit()
+    session.close()
+    return True
 """
 查询菜的评论
 """

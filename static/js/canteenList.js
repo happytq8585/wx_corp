@@ -46,8 +46,40 @@ $(function () {
     //确定预定弹窗
     $('.ReserveBtn').click('on',function () {
         $('.Reserve').css({display:'none'});
-        // $('.ReserveBox').find('input').val()  预定的数量
-        console.log($('.ReserveBox').find('input').val());
+        var num = $('.ReserveBox').find('input').val(); // 预定的数量
+        var dish_id = $("img").attr("id");  //dish id
+        var dish_name = $("h4").val();
+        if (num == null || num < 1) {
+            alert("预订数目不正确");
+            return -1;
+        }
+        if (dish_id == null) {
+            alert("菜的id不正确，无法预订");
+            return -1;
+        }
+        if (dish_name == null) {
+            alert("菜的名字不正确，无法预订");
+            return -1;
+        }
+        var xsrf = get_cookie_by_name("_xsrf");
+        if (xsrf == null) {
+            alert("Missing parameter _xsrf");
+            return -1;
+        }
+        $.ajax({
+            'Cookie': document.cookie,
+            url: "/order",
+            type: "POST",
+            data: {"dish_id":dish_id, "num":parseInt(num), "dish_name":dish_name, "_xsrf":xsrf},
+            success: function(para) {
+                alert(para);
+                window.location.reload();
+            },
+            error: function(para) {
+                alert(para);
+                window.location.reload();
+            }
+        });
     });
 
 
@@ -55,6 +87,14 @@ $(function () {
     $('.UpdataBtn').click('on',function () {
         var star  = $('#rating').val();   //评论星星的数量；
         var words = $('#evaluate').val(); //评论文字的内容；
+        if (star == null) {
+            alert("没有评等级");
+            return -1;
+        }
+        if (words == null) {
+            alert("没有评论内容");
+            return -1;
+        }
         $(".star").removeAttr("onMouseOver");
         $(".star").removeAttr("onMouseOut");
         $(".star").attr("href", "");
@@ -63,10 +103,14 @@ $(function () {
         $.ajax({
             'Cookie': document.cookie,
             url:"/comment",
-            type: "GET",
+            type: "POST",
             data: {"id":id, "star":parseInt(star), "words":words, "_xsrf":xsrf},
             success: function(para) {
-                alert("comment success!");
+                alert(para);
+                window.location.reload();
+            },
+            error: function(para) {
+                alert(para);
                 window.location.reload();
             }
         });

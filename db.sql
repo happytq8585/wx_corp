@@ -15,9 +15,11 @@ create table if not exists order_info
 (
  id int unsigned primary key auto_increment,
  user_id int unsigned not null, /*用户id*/
+ user_name varchar(64) not null, /*用户名*/
  dish_id int unsigned not null, /*菜名id*/
+ dish_name varchar(64) not null, /*菜名*/
  num     int unsigned not null, /*数量*/
- time date not null             /*下单时间*/
+ time timestamp default CURRENT_TIMESTAMP     /*评论的时间*/
 ) engine=InnoDB, charset=utf8;
 
 /*菜的数据库表*/

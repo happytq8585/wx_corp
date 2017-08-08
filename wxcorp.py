@@ -14,7 +14,7 @@ from tornado.web import StaticFileHandler
 from tornado.options import define, options
 
 from tables import query_user, write_dish, query_dish_by_day, regist_user, dish_delete
-from tables import query_comments_by_id, write_comment
+from tables import query_comments_by_id, write_comment, write_order
 from hostip import get_ip_address
 
 define("port", default=8000, help="run on the given port", type=int)
@@ -189,9 +189,15 @@ class DeleteHandler(BaseHandler):
             self.write("id is invalid")
         dish_delete(imgid)
         self.write("OK!!!")
+'''
+评论提交处理类
+dish_id:  菜的id
+star:     对该菜的星级评价
+words:    对该菜的评论内容
+'''
 class CommentHandler(BaseHandler):
     @tornado.web.authenticated
-    def get(self):
+    def post(self):
         dish_id        = self.get_argument("id", None)
         star           = self.get_argument("star", None)
         words          = self.get_argument("words", None)
@@ -206,6 +212,28 @@ class CommentHandler(BaseHandler):
         if not ret:
             self.write({"code":-1, "reason": "write failed!"})
         self.write("success")
+"""
+订单信息提交
+"""
+class OrderHandler(BaseHandler):
+    @tornado.web.authenticated
+    def post(self):
+        dish_id      = self.get_argument("dish_id", None)
+        dish_name    = self.get_argument("dish_name", None)
+        num          = self.get_argument("num", None)
+        userid       = self.get_secure_cookie("userid")
+        username     = self.get_secure_cookie("username")
+        if not dish_id:
+            self.write("dish_id is null!")
+        if not dish_name:
+            self.write("dish_name is null!")
+        if not num:
+            self.write("num is null")
+        ret = write_order(userid, username, dish_id, dish_name, num)
+        if not ret:
+            self.write("order to db error!")
+        self.write("order success!")
+
 if __name__ == "__main__":
     tornado.options.parse_command_line()
     settings = {
@@ -223,6 +251,7 @@ if __name__ == "__main__":
                (r'/canteen', CanteenIndexHandler),
                (r'/canteenItem', CanteenItemHandler),
                (r'/comment', CommentHandler),
+               (r'/order',   OrderHandler),
                (r'/', IndexHandler),
                (r'/welcome', WelcomeHandler),
                (r'/login', LoginHandler),
