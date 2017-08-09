@@ -14,7 +14,7 @@ from tornado.web import StaticFileHandler
 from tornado.options import define, options
 
 from tables import query_user, write_dish, query_dish_by_day, regist_user, dish_delete
-from tables import query_comments_by_id, write_comment, write_order
+from tables import query_comments_by_id, write_comment, write_order, update_user_password
 from hostip import get_ip_address
 
 define("port", default=8000, help="run on the given port", type=int)
@@ -49,7 +49,7 @@ class MenuHandler(BaseHandler):
         res['username']  = uname
         res['data']      = data
         print res
-        self.render("menu.html", today=today, data=data, host_ip=hostip, username=uname)
+        self.render("menu.html", today=today, data=data, host_ip=hostip, username=uname, personal=False, orderlist=False)
 
 class UploadFileHandler(BaseHandler):
     @tornado.web.authenticated
@@ -147,7 +147,7 @@ class CanteenIndexHandler(BaseHandler):
             ret['role'] = role
             self.write(ret)
         else:
-            self.render("canteen.html", username=uname, role=role, arr=a)
+            self.render("canteen.html", username=uname, role=role, arr=a, personal=False, orderlist=False)
 '''
 dish图片的landing page处理
 '''
@@ -173,7 +173,7 @@ class CanteenItemHandler(BaseHandler):
             if e.user_id == userid:
                 user_comment = e
                 break
-        self.render("canteenList.html", R=r, C=c, user_comment=user_comment)
+        self.render("canteenList.html", R=r, C=c, user_comment=user_comment, personal=False, orderlist=False)
     def post(self):
         pass
 class LogoutHandler(tornado.web.RequestHandler):
@@ -204,13 +204,17 @@ class CommentHandler(BaseHandler):
         userid         = self.get_secure_cookie("userid")
         if not dish_id:
             self.write({"code":-1, "reason": "dish id is invalid"})
+            return -1
         if not star:
             self.write({"code":-1, "reason": "star number is invalid"})
+            return -1
         if not words:
             self.write({"code":-1, "reason": "comments is null"})
+            return -1
         ret = write_comment(userid, dish_id, star, words)
         if not ret:
             self.write({"code":-1, "reason": "write failed!"})
+            return -1
         self.write("success")
 """
 订单信息提交
@@ -225,14 +229,49 @@ class OrderHandler(BaseHandler):
         username     = self.get_secure_cookie("username")
         if not dish_id:
             self.write("dish_id is null!")
+            return 1
         if not dish_name:
             self.write("dish_name is null!")
+            return 1
         if not num:
             self.write("num is null")
+            return 1
         ret = write_order(userid, username, dish_id, dish_name, num)
         if not ret:
             self.write("order to db error!")
+            return 1
         self.write("order success!")
+
+class PersonalCenterHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        self.render("PersonalCenter.html", personal=False, orderlist=False)
+    def post(self):
+        t     = self.get_argument("type", None)
+        if not t:
+            self.write("type is missing")
+            return 1
+        t = int(t)
+        if t == 1:#rewrite password
+            old       = self.get_argument("old", None)
+            passwd    = self.get_argument("passwd", None)
+            userid    = self.get_secure_cookie("userid")
+            if not old:
+                self.write("old password is null")
+                return 1
+            if not passwd:
+                self.write("new passwd is null")
+                return 1
+            ret = update_user_password(userid, old, passwd)
+            if not ret:
+                self.write("update password failed")
+                return 1
+            self.write("update password success")
+
+class OrderListHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        pass
 
 if __name__ == "__main__":
     tornado.options.parse_command_line()
@@ -252,6 +291,8 @@ if __name__ == "__main__":
                (r'/canteenItem', CanteenItemHandler),
                (r'/comment', CommentHandler),
                (r'/order',   OrderHandler),
+               (r'/personalcenter', PersonalCenterHandler),
+               (r'/orderlist', OrderListHandler),
                (r'/', IndexHandler),
                (r'/welcome', WelcomeHandler),
                (r'/login', LoginHandler),

@@ -46,12 +46,12 @@ function canteen_fill(day) {
                 var box = "<div class=\"canteenmenuBox\">"                           +
                               "<div class=\"left\">"                                 +
                                   "<a href=\"" + loc  + "\">"                        +
-                                  "<img src=\"" + e['pic_src'] + "\">"               +
+                   "<img src=\"" + e['pic_src'] + "\"" + " id=\"" + e['id'] + "\">"  +
                                   "</a>"                                             +
                               "</div>"                                               +
                               "<div class=\"left\">"                                 +
                                   "<p class=\"canteenmenuName\">"                    +
-                                    "<span>" + e['dish_name'] + "</span>"            +
+                                    "<span><h4>" + e['dish_name'] + "</h4></span>"   +
                                   "</p>"                                             +
                                   "<p>"                                              +
                                     "<span>食材: </span>"                            +
@@ -74,6 +74,9 @@ function canteen_fill(day) {
                 $('.canteenLeft').append(box);
             }
             $(".img_close").bind("click", close_click);
+            $('.canteenmenuBtn').bind('click',function () {
+                $('.Reserve').css({display:'block'});
+            })
             if (para['role'] == 1) {
                 var xsrf = get_cookie_by_name("_xsrf");
                 var day  =  get_click_day();
@@ -157,9 +160,7 @@ $(function () {
     //打开预定弹窗
     var Reservenum ;
     $('.canteenmenuBtn').click('on',function () {
-        console.log($(this).attr('value'));
-        Reservenum = $(this).attr('value');
-        $('.Reserve').css({display:'block'})
+        $('.Reserve').css({display:'block'});
     })
 
     //关闭预定弹窗
@@ -169,10 +170,40 @@ $(function () {
     //确定预定弹窗
     $('.ReserveBtn').click('on',function () {
         $('.Reserve').css({display:'none'});
-        // Reservenum  确定预定菜品的唯一值
-        // $('.ReserveBox').find('input').val()  预定的数量
-
-        console.log($('.ReserveBox').find('input').val());
-    })
+        var num = $('.ReserveBox').find('input').val(); // 预定的数量
+        var dish_id = $("img").attr("id");  //dish id
+        var dish_name = $("h4").html();
+        if (num == null || num < 1) {
+            alert("预订数目不正确");
+            return -1;
+        }
+        if (dish_id == null) {
+            alert("菜的id不正确，无法预订");
+            return -1;
+        }
+        if (dish_name == null) {
+            alert("菜的名字不正确，无法预订");
+            return -1;
+        }
+        var xsrf = get_cookie_by_name("_xsrf");
+        if (xsrf == null) {
+            alert("Missing parameter _xsrf");
+            return -1;
+        }
+        $.ajax({
+            'Cookie': document.cookie,
+            url: "/order",
+            type: "POST",
+            data: {"dish_id":dish_id, "num":parseInt(num), "dish_name":dish_name, "_xsrf":xsrf},
+            success: function(para) {
+                alert(para);
+                window.location.reload();
+            },
+            error: function(para) {
+                alert(para);
+                window.location.reload();
+            }
+        });
+    });
     $(".img_close").bind("click", close_click);
 })

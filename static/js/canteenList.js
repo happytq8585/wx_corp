@@ -36,7 +36,7 @@ $(function () {
 
     $('.canteenmenuBtn').click('on',function () {
 
-        $('.Reserve').css({display:'block'})
+        $('.Reserve').css({display:'block'});
     })
 
     //关闭预定弹窗
@@ -48,7 +48,7 @@ $(function () {
         $('.Reserve').css({display:'none'});
         var num = $('.ReserveBox').find('input').val(); // 预定的数量
         var dish_id = $("img").attr("id");  //dish id
-        var dish_name = $("h4").val();
+        var dish_name = $("h4").html();
         if (num == null || num < 1) {
             alert("预订数目不正确");
             return -1;

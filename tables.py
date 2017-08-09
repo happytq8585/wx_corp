@@ -182,5 +182,16 @@ def regist_user(info):
         return 0#regist successfully
     return 1#name duplicated
 
+def update_user_password(userid, old, passwd):
+    session = DBSession()
+    sha512 = hashlib.sha512(passwd.encode()).hexdigest()
+    sha512old = hashlib.sha512(old.encode()).hexdigest()
+    res = session.query(User).filter(User.id == userid).filter(User.password == sha512old).count()
+    if not res:
+        return None
+    res = session.query(User).filter(User.id == userid).update({User.password:sha512})
+    session.commit()
+    return True
+
 if __name__ == "__main__":
     pass

@@ -1,5 +1,0 @@
-<ul id="userinfo">
-    <p>您好, {{username}}</p>
-    <a href="/userinfo">用户信息</a>
-    <a href="/logout">退出</a>
-</ul>
