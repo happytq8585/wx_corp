@@ -147,7 +147,9 @@ class CanteenIndexHandler(BaseHandler):
             ret['role'] = role
             self.write(ret)
         else:
-            self.render("canteen.html", username=uname, role=role, arr=a, personal=False, orderlist=False)
+            t = time.localtime();
+            timestamp = time.strftime("%Y.%m.%d", t)
+            self.render("canteen.html", username=uname, role=role, arr=a, personal=False, orderlist=False, today=timestamp)
 '''
 dish图片的landing page处理
 '''
@@ -173,7 +175,9 @@ class CanteenItemHandler(BaseHandler):
             if e.user_id == userid:
                 user_comment = e
                 break
-        self.render("canteenList.html", R=r, C=c, user_comment=user_comment, personal=False, orderlist=False)
+        t = time.localtime();
+        timestamp = time.strftime("%Y.%m.%d", t)
+        self.render("canteenList.html", R=r, C=c, user_comment=user_comment, personal=False, orderlist=False, today=timestamp)
     def post(self):
         pass
 class LogoutHandler(tornado.web.RequestHandler):
