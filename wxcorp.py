@@ -15,6 +15,7 @@ from tornado.options import define, options
 
 from tables import query_user, write_dish, query_dish_by_day, regist_user, dish_delete
 from tables import query_comments_by_id, write_comment, write_order, update_user_password
+from tables import query_order_list_by_uid
 from hostip import get_ip_address
 
 define("port", default=8000, help="run on the given port", type=int)
@@ -49,7 +50,7 @@ class MenuHandler(BaseHandler):
         res['username']  = uname
         res['data']      = data
         print res
-        self.render("menu.html", today=today, data=data, host_ip=hostip, username=uname, personal=False, orderlist=False)
+        self.render("menu.html", today=today, data=data, host_ip=hostip, username=uname)
 
 class UploadFileHandler(BaseHandler):
     @tornado.web.authenticated
@@ -94,7 +95,7 @@ class LoginHandler(tornado.web.RequestHandler):
         upass = self.get_argument("password")
         ret = query_user(uname + '\3' + upass)
         if not ret:
-            self.render("failed_log.html")
+            self.write("用户名或密码错误")
         else:
             print(ret)
             self.set_secure_cookie("username", uname, expires_days=None)
@@ -149,7 +150,7 @@ class CanteenIndexHandler(BaseHandler):
         else:
             t = time.localtime();
             timestamp = time.strftime("%Y.%m.%d", t)
-            self.render("canteen.html", username=uname, role=role, arr=a, personal=False, orderlist=False, today=timestamp)
+            self.render("canteen.html", username=uname, role=role, arr=a, today=timestamp)
 '''
 dish图片的landing page处理
 '''
@@ -177,7 +178,7 @@ class CanteenItemHandler(BaseHandler):
                 break
         t = time.localtime();
         timestamp = time.strftime("%Y.%m.%d", t)
-        self.render("canteenList.html", R=r, C=c, user_comment=user_comment, personal=False, orderlist=False, today=timestamp)
+        self.render("canteenList.html", R=r, C=c, user_comment=user_comment, today=timestamp)
     def post(self):
         pass
 class LogoutHandler(tornado.web.RequestHandler):
@@ -229,6 +230,7 @@ class OrderHandler(BaseHandler):
         dish_id      = self.get_argument("dish_id", None)
         dish_name    = self.get_argument("dish_name", None)
         num          = self.get_argument("num", None)
+        img_url      = self.get_argument("img_url", "")
         userid       = self.get_secure_cookie("userid")
         username     = self.get_secure_cookie("username")
         if not dish_id:
@@ -240,7 +242,7 @@ class OrderHandler(BaseHandler):
         if not num:
             self.write("num is null")
             return 1
-        ret = write_order(userid, username, dish_id, dish_name, num)
+        ret = write_order(userid, username, dish_id, dish_name, img_url, num)
         if not ret:
             self.write("order to db error!")
             return 1
@@ -249,7 +251,7 @@ class OrderHandler(BaseHandler):
 class PersonalCenterHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
-        self.render("PersonalCenter.html", personal=False, orderlist=False)
+        self.render("PersonalCenter.html")
     def post(self):
         t     = self.get_argument("type", None)
         if not t:
@@ -275,7 +277,11 @@ class PersonalCenterHandler(BaseHandler):
 class OrderListHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
-        pass
+        uid         = self.get_secure_cookie("userid")
+        olist       = query_order_list_by_uid(uid)
+        print(olist)
+        self.render("OrderList.html", olist=olist)
+
 
 if __name__ == "__main__":
     tornado.options.parse_command_line()

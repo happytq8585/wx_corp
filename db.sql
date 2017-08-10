@@ -18,6 +18,7 @@ create table if not exists order_info
  user_name varchar(64) not null, /*用户名*/
  dish_id int unsigned not null, /*菜名id*/
  dish_name varchar(64) not null, /*菜名*/
+ img_url   varchar(128) not null, /*菜的图片的url*/
  num     int unsigned not null, /*数量*/
  time timestamp default CURRENT_TIMESTAMP     /*评论的时间*/
 ) engine=InnoDB, charset=utf8;

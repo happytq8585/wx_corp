@@ -66,11 +66,14 @@ $(function () {
             alert("Missing parameter _xsrf");
             return -1;
         }
+        var img_url = $("img").attr("src");
         $.ajax({
             'Cookie': document.cookie,
             url: "/order",
             type: "POST",
-            data: {"dish_id":dish_id, "num":parseInt(num), "dish_name":dish_name, "_xsrf":xsrf},
+            data: {"dish_id":dish_id, "num":parseInt(num),
+                   "img_url": img_url,
+                   "dish_name":dish_name, "_xsrf":xsrf},
             success: function(para) {
                 alert(para);
                 window.location.reload();
