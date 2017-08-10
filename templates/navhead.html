@@ -23,16 +23,8 @@
                 <li class="dropdown">
                     <a href="#"  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span>您好</span><span class="LoginName">Hello</span> <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        {% if personal == True %}
-                        <li><a href="/#">个人中心</a></li>
-                        {% else %}
                         <li><a href="/personalcenter">个人中心</a></li>
-                        {% end %}
-                        {% if orderlist == True %}
-                        <li><a href="/#">订单列表</a></li>
-                        {% else %}
                         <li><a href="/orderlist">订单列表</a></li>
-                        {% end %}
                     </ul>
                 </li>
                 <li><div class="Signout"><a href="/logout">退出</a></div></li>

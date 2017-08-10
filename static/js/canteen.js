@@ -62,12 +62,18 @@ function canteen_fill(day) {
                 if (e['order'] == 1) {
                     box += "<div class=\"canteenmenuBtn\" value=\"1\">立即预定</div>";
                 }
-                box = box                                                            +
+                box +=                                                              
                             "<p></p>"                                                +
                               "</div>"                                               +
                               "<div class=\"right\">"                                +
                                 "<img src=\"img/close.png\" class=\"img_close\""     +
-                                    "id=\"" + e['id'] + "\">"                        +
+                                    "id=\"" + e['id'] + "\"";
+                if (para['role'] != 1) {
+                    box +=  "hidden >";
+                } else {
+                    box +=  ">";
+                }
+                box += 
                               "</div>"                                               +
                               "<div class=\"clear\"></div>"                          +
                           "</div>";

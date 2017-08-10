@@ -50,7 +50,7 @@ class MenuHandler(BaseHandler):
         res['username']  = uname
         res['data']      = data
         print res
-        self.render("menu.html", today=today, data=data, host_ip=hostip, username=uname, personal=False, orderlist=False)
+        self.render("menu.html", today=today, data=data, host_ip=hostip, username=uname)
 
 class UploadFileHandler(BaseHandler):
     @tornado.web.authenticated
@@ -95,7 +95,7 @@ class LoginHandler(tornado.web.RequestHandler):
         upass = self.get_argument("password")
         ret = query_user(uname + '\3' + upass)
         if not ret:
-            self.render("failed_log.html")
+            self.write("用户名或密码错误")
         else:
             print(ret)
             self.set_secure_cookie("username", uname, expires_days=None)
@@ -148,7 +148,7 @@ class CanteenIndexHandler(BaseHandler):
             ret['role'] = role
             self.write(ret)
         else:
-            self.render("canteen.html", username=uname, role=role, arr=a, personal=False, orderlist=False)
+            self.render("canteen.html", username=uname, role=role, arr=a)
 '''
 dish图片的landing page处理
 '''
@@ -174,7 +174,7 @@ class CanteenItemHandler(BaseHandler):
             if e.user_id == userid:
                 user_comment = e
                 break
-        self.render("canteenList.html", R=r, C=c, user_comment=user_comment, personal=False, orderlist=False)
+        self.render("canteenList.html", R=r, C=c, user_comment=user_comment)
     def post(self):
         pass
 class LogoutHandler(tornado.web.RequestHandler):
@@ -247,7 +247,7 @@ class OrderHandler(BaseHandler):
 class PersonalCenterHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
-        self.render("PersonalCenter.html", personal=False, orderlist=False)
+        self.render("PersonalCenter.html")
     def post(self):
         t     = self.get_argument("type", None)
         if not t:
@@ -276,7 +276,7 @@ class OrderListHandler(BaseHandler):
         uid         = self.get_secure_cookie("userid")
         olist       = query_order_list_by_uid(uid)
         print(olist)
-        self.render("OrderList.html", olist=olist, personal=False, orderlist=True)
+        self.render("OrderList.html", olist=olist)
 
 
 if __name__ == "__main__":
