@@ -15,6 +15,7 @@ from tornado.options import define, options
 
 from tables import query_user, write_dish, query_dish_by_day, regist_user, dish_delete
 from tables import query_comments_by_id, write_comment, write_order, update_user_password
+from tables import query_order_list_by_uid
 from hostip import get_ip_address
 
 define("port", default=8000, help="run on the given port", type=int)
@@ -225,6 +226,7 @@ class OrderHandler(BaseHandler):
         dish_id      = self.get_argument("dish_id", None)
         dish_name    = self.get_argument("dish_name", None)
         num          = self.get_argument("num", None)
+        img_url      = self.get_argument("img_url", "")
         userid       = self.get_secure_cookie("userid")
         username     = self.get_secure_cookie("username")
         if not dish_id:
@@ -236,7 +238,7 @@ class OrderHandler(BaseHandler):
         if not num:
             self.write("num is null")
             return 1
-        ret = write_order(userid, username, dish_id, dish_name, num)
+        ret = write_order(userid, username, dish_id, dish_name, img_url, num)
         if not ret:
             self.write("order to db error!")
             return 1
@@ -271,7 +273,11 @@ class PersonalCenterHandler(BaseHandler):
 class OrderListHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
-        pass
+        uid         = self.get_secure_cookie("userid")
+        olist       = query_order_list_by_uid(uid)
+        print(olist)
+        self.render("OrderList.html", olist=olist, personal=False, orderlist=True)
+
 
 if __name__ == "__main__":
     tornado.options.parse_command_line()

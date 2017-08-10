@@ -84,18 +84,20 @@ class Comment(Base):
 
 class Order(Base):
     __tablename__ = "order_info"
-    def __init__(self, id_, uid, uname, did, dname, num):
+    def __init__(self, id_, uid, uname, did, dname, img_url, num):
         self.id            = id_
         self.user_id       = uid
         self.user_name     = uname
         self.dish_id       = did
         self.dish_name     = dname
+        self.img_url       = img_url
         self.num           = num
     id          = Column(Integer, primary_key=True)
     user_id     = Column(Integer)
     user_name   = Column(String(64))
     dish_id     = Column(Integer)
     dish_name   = Column(String(64))
+    img_url     = Column(String(128))
     num         = Column(Integer)
     time        = Column(TIMESTAMP)
 
@@ -138,9 +140,9 @@ def write_comment(userid, dish_id, star, words):
 """
 将预订信息写入数据库
 """
-def write_order(userid, username, dish_id, dish_name, num):
+def write_order(userid, username, dish_id, dish_name, img_url, num):
     session = DBSession()
-    o = Order(0, userid, username, dish_id, dish_name, num)
+    o = Order(0, userid, username, dish_id, dish_name, img_url, num)
     session.add(o)
     session.commit()
     session.close()
@@ -192,6 +194,12 @@ def update_user_password(userid, old, passwd):
     res = session.query(User).filter(User.id == userid).update({User.password:sha512})
     session.commit()
     return True
+
+def query_order_list_by_uid(uid):
+    session = DBSession()
+    res = session.query(Order).filter(Order.user_id == uid).order_by(Order.time.desc()).all()
+    ret = [{'img_url':e.img_url, 'num': e.num, 'dish_name': e.dish_name, 'time': e.time} for e in res]
+    return ret
 
 if __name__ == "__main__":
     pass

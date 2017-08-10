@@ -190,6 +190,7 @@ $(function () {
             alert("Missing parameter _xsrf");
             return -1;
         }
+        var img_url = $("img").attr("src");
         $.ajax({
             'Cookie': document.cookie,
             url: "/order",

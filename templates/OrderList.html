@@ -12,6 +12,14 @@
 <div class="OrderList">
     <h4>订单列表</h4>
     <div class="OrderListBox">
+        {% for e in olist %}
+            <div class="OrderListBoxCenter">
+                <img src="{{ e['img_url'] }}" alt="" >
+                <span>{{ e['dish_name'] }}</span>
+                <span>{{ e['num'] }}</span>
+                <span>{{ e['time'] }}</span>
+            </div>
+        {% end %}
         <!--<div class="OrderListBoxCenter">-->
             <!--<img src="img/97.jpg" alt="">-->
             <!--<span>凉拌三丝</span>-->
