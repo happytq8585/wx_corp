@@ -199,7 +199,14 @@ def query_order_list_by_uid(uid):
     session = DBSession()
     res = session.query(Order).filter(Order.user_id == uid).order_by(Order.time.desc()).all()
     ret = [{'img_url':e.img_url, 'num': e.num, 'dish_name': e.dish_name, 'time': e.time} for e in res]
+    session.close()
     return ret
 
+def query_all_users():
+    session = DBSession()
+    res = session.query(User).all()
+    ret = [{"name": e.name, "role": e.role, "id":e.id} for e in res]
+    session.close()
+    return ret
 if __name__ == "__main__":
     pass

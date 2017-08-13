@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/default.css">
+    <link rel="stylesheet" href="css/Employeelists.css">
+</head>
+<body>
+{% include "navhead.html" %}
+<div class="Employeelists">
+    <h4>员工列表</h4>
+    <div class="EmployeelistsBox">
+        <button class="btn btn-default addEmployeelist" type="submit">添加用户</button>
+        <table id="table" class="table1"  cellspacing="0">
+            <tr>
+                <th>用户名</th>
+                <th>密码</th>
+                <th>角色</th>
+                <th>操作</th>
+            </tr>
+            <tr>
+                <td>test1</td>
+                <td>test2</td>
+                <td>
+                    <button onclick="update(this,1)">修改</button>
+                    <button onclick="ondelete(this,1)">删除</button>
+                </td>
+            </tr>
+        {% for i in xrange(len(userlists)) %}
+            <tr id="{{ userlists[i]['id'] }}">
+                <td>{{ userlists[i]['name'] }}</td>
+                <td>******</td>
+                <td>{{ userlists[i]['role'] }}</td>
+                <td>
+                    <button onclick="update(this, {{userlists[i]['id']}})">修改</button>
+                    <button onclick="ondelete(this, {{userlists[i]['id']}}">删除</button>
+                </td>
+            </tr>
+        {% end %}
+        </table>
+    </div>
+</div>
+<div class="Sure">
+    <div class="SureBox">
+        <p> 确认删除该用户？ </p>
+        <div>
+            <span class="SureBtn" onclick="suredelete()" >确定</span>
+            <span class="SureBtn" onclick="surecancel()" >取消</span>
+        </div>
+
+    </div>
+</div>
+</body>
+
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/default.js"></script>
+<script src="js/Employeelists.js"></script>
+<script>
+    //传入的obj为本身的对象  x为该行的index值   从1开始
+    function update(obj,x){
+        var table = document.getElementById("table");
+        for(var i=0;i<table.rows[x].cells.length-1;i++){
+            var text = table.rows[x].cells[i].innerHTML;
+            table.rows[x].cells[i].innerHTML = '<input class="input" name="input'+ x + '" type="text" value=""/>';
+            var input = document.getElementsByName("input" + x);
+            input[i].value = text;
+            input[0].focus();
+            input[0].select();
+        }
+        obj.innerHTML = "确定";
+        obj.onclick = function onclick(event) {
+            update_success(this,x);
+
+        };
+    }
+
+function get_cookie_by_name(name)
+{
+    var start = document.cookie.indexOf(name);
+    if (start != -1) {
+        var res = "";
+        var end  = document.cookie.indexOf(";", start+1);
+        if (end == -1) {
+            res = document.cookie.substring(start+name.length+1);
+        } else {
+            res = document.cookie.substring(start+name.length+1, end);
+        }
+        return res;
+    }
+    return "";
+}
+    function update_success(obj,x){
+        var arr = [];
+        var table = document.getElementById("table");
+        var input = document.getElementsByName("input" + x);
+        for(var i=0; i < table.rows[x].cells.length-1;i++){
+            var text = input[i].value;
+            arr.push(text);
+        }
+        //把值赋值给表格，不能在取值的时候给，会打乱input的个数
+        for(var j=0;j<arr.length;j++){
+            table.rows[x].cells[j].innerHTML = arr[j];
+        }
+        //回到原来状态
+        obj.innerHTML = "修改";
+        obj.onclick = function onclick(event) {
+            update(this,x)
+        };
+
+        //可在此处写ajax 传入修改的数据给后台  除了arr以外   还需要一个标记用户的属性
+
+        //arr为修改后的用户名和密码
+        alert(arr + ",传到后端操作成功，刷新页面");
+    }
+    //删除表格数据 可将x改为删除时所需要的数据
+    function ondelete(obj,x){
+        var xsrf = get_cookie_by_name("_xsrf");
+        $.ajax({
+            'Cookie': document.cookie,
+            'url': "/employee?action=delete",
+            type: "POST",
+            data: {"id":x, "_xsrf": xsrf},
+            success: function(para) {
+                alert("delete success");
+                window.location.reload();
+            },
+            error: function(para) {
+                alert("delete error");
+                window.location.reload();
+            }
+        });
+        $('.Sure').css({display:'block'});
+    }
+    //取消删除
+    function surecancel(){
+        $('.Sure').css({display:'none'});
+    }
+    //确认删除
+    function suredelete(){
+        surecancel();
+    }
+    //添加用户
+    $('.addEmployeelist').click('on',function(){
+        var num = $('.table1').find('tr').length;
+        console.log(num);
+        var innerhtml = '<tr>'+
+                '<td><input class="input" name="input'+ num + '" type="text" value="用户名"/></td>'+
+                '<td><input class="input" name="input'+ num + '" type="text" value="密码"/></td>'+
+                '<td>'+
+                '<button onclick="addsure()">确定</button>'+
+                '<button onclick="adddelete()">删除</button>'+
+                '</td>'+
+                '</tr>';
+
+        $('.table1').append(innerhtml);
+    })
+    //确认添加用户名
+    function addsure(){
+        //确认添加用户后  页面刷新
+
+    }
+    //删除添加用户
+    function adddelete(){
+        //注意 添加的删除事件和已经存在的用户的删除事件  不一样
+        $('.table1').find('tr').last().detach();
+    }
+</script>
+</html>

@@ -15,7 +15,7 @@ from tornado.options import define, options
 
 from tables import query_user, write_dish, query_dish_by_day, regist_user, dish_delete
 from tables import query_comments_by_id, write_comment, write_order, update_user_password
-from tables import query_order_list_by_uid
+from tables import query_order_list_by_uid, query_all_users
 from hostip import get_ip_address
 
 define("port", default=8000, help="run on the given port", type=int)
@@ -281,7 +281,15 @@ class OrderListHandler(BaseHandler):
         olist       = query_order_list_by_uid(uid)
         print(olist)
         self.render("OrderList.html", olist=olist)
-
+class EmployeeHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        users       = query_all_users()
+        self.render("EmployeeLists.html", userlists=users)
+    @tornado.web.authenticated
+    def post(self):
+        action      = self.get_argument("action", "")
+        print(action)
 
 if __name__ == "__main__":
     tornado.options.parse_command_line()
@@ -303,6 +311,7 @@ if __name__ == "__main__":
                (r'/order',   OrderHandler),
                (r'/personalcenter', PersonalCenterHandler),
                (r'/orderlist', OrderListHandler),
+               (r'/employee', EmployeeHandler),
                (r'/', IndexHandler),
                (r'/welcome', WelcomeHandler),
                (r'/login', LoginHandler),
