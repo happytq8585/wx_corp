@@ -7,7 +7,11 @@ function close_click()
             type: "GET",
             data: {"id":id},
             success: function(para){
-                alert(para);
+                alert("delete success");
+                window.location.reload();
+            },
+            error: function(para) {
+                alert("delete failed!");
                 window.location.reload();
             }
     });
@@ -27,6 +31,7 @@ function get_cookie_by_name(name)
     }
     return "";
 }
+var DISHID=-1, DISHNAME="", IMGURL="";
 function canteen_fill(day) {
     $.ajax({
         url: "/canteen",
@@ -60,7 +65,8 @@ function canteen_fill(day) {
                                   "</p>"                                             +
                                   "<p></p>"; 
                 if (e['order'] == 1) {
-                    box += "<div class=\"canteenmenuBtn\" value=\"1\">立即预定</div>";
+                    box += "<div class=\"canteenmenuBtn\"" + "value=" +
+                            e['id'] + ">立即预定</div>";
                 }
                 box +=                                                              
                             "<p></p>"                                                +
@@ -82,6 +88,10 @@ function canteen_fill(day) {
             $(".img_close").bind("click", close_click);
             $('.canteenmenuBtn').bind('click',function () {
                 $('.Reserve').css({display:'block'});
+                DISHID   = $(this).parent().children().eq(5).attr("value");
+                DISHID   = parseInt(DISHID);
+                DISHNAME = $(this).parent().children().eq(1).html();
+                IMGURL   = $(this).parent().parent().children().first().children().children().attr("src");
             })
             if (para['role'] == 1) {
                 var xsrf = get_cookie_by_name("_xsrf");
@@ -177,8 +187,8 @@ $(function () {
     $('.ReserveBtn').click('on',function () {
         $('.Reserve').css({display:'none'});
         var num = $('.ReserveBox').find('input').val(); // 预定的数量
-        var dish_id = $("img").attr("id");  //dish id
-        var dish_name = $("h4").html();
+        var dish_id = DISHID;
+        var dish_name = DISHNAME;
         if (num == null || num < 1) {
             alert("预订数目不正确");
             return -1;
@@ -196,19 +206,17 @@ $(function () {
             alert("Missing parameter _xsrf");
             return -1;
         }
-        var img_url = $("img").attr("src");
+        var img_url = IMGURL;
         $.ajax({
             'Cookie': document.cookie,
             url: "/order",
             type: "POST",
-            data: {"dish_id":dish_id, "num":parseInt(num), "dish_name":dish_name, "_xsrf":xsrf},
+            data: {"dish_id":dish_id, "num":parseInt(num), "dish_name":dish_name, "_xsrf":xsrf, "img_url": img_url},
             success: function(para) {
                 alert(para);
-                window.location.reload();
             },
             error: function(para) {
                 alert(para);
-                window.location.reload();
             }
         });
     });

@@ -25,7 +25,9 @@
                     <ul class="dropdown-menu">
                         <li><a href="/personalcenter">个人中心</a></li>
                         <li><a href="/orderlist">订单列表</a></li>
+                    {% if role == 1 %}
                         <li><a href="/employee">名单列表中心</a></li>
+                    {% end %}
                     </ul>
                 </li>
                 <li><div class="Signout"><a href="/logout">退出</a></div></li>

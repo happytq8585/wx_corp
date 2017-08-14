@@ -41,12 +41,12 @@ $(function () {
             type: "POST",
             data: {'old': old, 'passwd':n1, '_xsrf':xsrf, 'type': 1}, //type=1 rewrite password
             success: function(para) {
-                alert(para);
-                return 0;
+                alert("更新成功");
+                window.location.reload();
             },
             error: function(para) {
-                alert(para);
-                return -1;
+                alert("更新失败");
+                window.location.reload();
             }
         });
     });

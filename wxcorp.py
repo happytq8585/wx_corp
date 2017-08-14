@@ -15,7 +15,8 @@ from tornado.options import define, options
 
 from tables import query_user, write_dish, query_dish_by_day, regist_user, dish_delete
 from tables import query_comments_by_id, write_comment, write_order, update_user_password
-from tables import query_order_list_by_uid, query_all_users
+from tables import query_order_list_by_uid, query_all_users, update_user
+from tables import add_user, delete_user
 from hostip import get_ip_address
 
 define("port", default=8000, help="run on the given port", type=int)
@@ -23,7 +24,8 @@ define("port", default=8000, help="run on the given port", type=int)
 class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
         return self.get_secure_cookie("username")
-
+    def get_role(self):
+        return int(self.get_secure_cookie("role"))
 class MenuHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
@@ -49,13 +51,10 @@ class MenuHandler(BaseHandler):
         res['serverip']  = hostip
         res['username']  = uname
         res['data']      = data
-        print res
-        self.render("menu.html", today=today, data=data, host_ip=hostip, username=uname)
+        role = self.get_role()
+        self.render("menu.html", today=today, data=data, host_ip=hostip, username=uname, role=role)
 
 class UploadFileHandler(BaseHandler):
-    @tornado.web.authenticated
-    def get(self):
-        self.render("up.html");
     @tornado.web.authenticated
     def post(self):
         if not os.path.exists("static/files"):
@@ -107,7 +106,8 @@ class WelcomeHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         uname = self.get_secure_cookie("username")
-        self.render("begin.html", username=uname)
+        role  = self.get_role()
+        self.render("begin.html", username=uname, role=role)
 '''
 @brief:  用户查看某一天的菜谱
 @param:  day= 空则取当天的菜谱 否则去具体的日期的菜谱
@@ -140,7 +140,7 @@ class CanteenIndexHandler(BaseHandler):
             e['id']               = i[-1]
             a.append(e)
         uname = self.get_secure_cookie("username")
-        role  = int(self.get_secure_cookie("role"))
+        role  = self.get_role()
         if json:
             ret = {}
             ret['data'] = a
@@ -178,7 +178,8 @@ class CanteenItemHandler(BaseHandler):
                 break
         t = time.localtime();
         timestamp = time.strftime("%Y.%m.%d", t)
-        self.render("canteenList.html", R=r, C=c, user_comment=user_comment, today=timestamp)
+        role = self.get_role()
+        self.render("canteenList.html", R=r, C=c, user_comment=user_comment, today=timestamp, role=role)
     def post(self):
         pass
 class LogoutHandler(tornado.web.RequestHandler):
@@ -251,7 +252,8 @@ class OrderHandler(BaseHandler):
 class PersonalCenterHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
-        self.render("PersonalCenter.html")
+        role = self.get_role()
+        self.render("PersonalCenter.html", role=role)
     def post(self):
         t     = self.get_argument("type", None)
         if not t:
@@ -280,17 +282,34 @@ class OrderListHandler(BaseHandler):
         uid         = self.get_secure_cookie("userid")
         olist       = query_order_list_by_uid(uid)
         print(olist)
-        self.render("OrderList.html", olist=olist)
+        role        = self.get_role()
+        self.render("OrderList.html", olist=olist, role=role)
 class EmployeeHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         users       = query_all_users()
-        self.render("EmployeeLists.html", userlists=users)
+        role        = self.get_role()
+        self.render("Employeelists.html", userlists=users, role=role)
     @tornado.web.authenticated
     def post(self):
-        action      = self.get_argument("action", "")
-        print(action)
+        action      = str(self.get_argument("action", ""))
+        name        = str(self.get_argument("name", ""))
+        passwd      = str(self.get_argument("passwd", ""))
+        role        = int(self.get_argument("role", -1))
+        uid         = int(self.get_argument("uid", -1))
+            
+        print(action, name, passwd, role, uid)
+        if action == "update":
+            update_user(name, passwd, role, uid)
+        elif action == "delete":
+            delete_user(uid)
+        elif action == "add":
+            add_user(name, passwd, role)
 
+class ConstructHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        self.write("Constructing!")
 if __name__ == "__main__":
     tornado.options.parse_command_line()
     settings = {
@@ -317,8 +336,10 @@ if __name__ == "__main__":
                (r'/login', LoginHandler),
                (r'/up', UploadFileHandler),
                (r'/delete', DeleteHandler),
-               (r'/menu', MenuHandler),
                (r'/logout', LogoutHandler),
+               (r'/meeting', ConstructHandler),
+               (r'/property',ConstructHandler),
+               (r'/notice',  ConstructHandler),
               ]
     application = tornado.web.Application(handler, **settings)
     http_server = tornado.httpserver.HTTPServer(application)

@@ -193,6 +193,7 @@ def update_user_password(userid, old, passwd):
         return None
     res = session.query(User).filter(User.id == userid).update({User.password:sha512})
     session.commit()
+    session.close()
     return True
 
 def query_order_list_by_uid(uid):
@@ -205,8 +206,36 @@ def query_order_list_by_uid(uid):
 def query_all_users():
     session = DBSession()
     res = session.query(User).all()
-    ret = [{"name": e.name, "role": e.role, "id":e.id} for e in res]
+    ret = [{"name": e.name, "role": e.role, "id":e.id, "passwd": e.password} for e in res]
     session.close()
     return ret
+
+def update_user(name, passwd, role, uid):
+    session = DBSession()
+    res = session.query(User).filter(User.id == uid).first()
+    if not res:
+        return True
+    sha512 = res.password
+    if sha512 != passwd:
+        sha512 = hashlib.sha512(passwd.encode()).hexdigest()
+    res = session.query(User).filter(User.id == uid).update({User.password:sha512, User.name: name, User.role: role})
+    session.commit()
+    session.close()
+    return True
+def delete_user(uid):
+    session = DBSession()
+    res = session.query(User).filter(User.id == uid).delete()
+    session.commit()
+    session.close()
+    return True
+def add_user(name, passwd, role):
+    session = DBSession()
+    sha512 = hashlib.sha512(passwd.encode()).hexdigest()
+    user    = User(name, sha512, role)
+    res = session.add(user)
+    session.commit()
+    session.close()
+    return True
+
 if __name__ == "__main__":
     pass

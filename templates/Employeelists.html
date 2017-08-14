@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/default.css">
+    <link rel="stylesheet" href="css/Employeelists.css">
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/default.js"></script>
+    <script src="js/Employeelists.js"></script>
+</head>
+<body>
+{% include "navhead.html" %}
+<div class="Employeelists">
+    <h4>员工列表</h4>
+    <div class="EmployeelistsBox">
+        <button class="btn btn-default addEmployeelist" onclick="add_username()" type="submit">添加用户</button>
+        <table id="table" class="table1"  cellspacing="0">
+            <tr>
+                <th>用户名</th>
+                <th>密码</th>
+                <th>角色</th>
+                <th>操作</th>
+            </tr>
+            {% for i in xrange(len(userlists)) %}
+            <tr>
+                <td>{{userlists[i]['name']}}</td>
+                <td>{{userlists[i]['passwd'][0:4]}}***{{userlists[i]['passwd'][-5:-1]}}</td>
+                <td>{{userlists[i]['role']}}</td>
+                <td hidden>{{userlists[i]['id']}}</td>
+                <td>
+                    <button onclick="update(this,{{i+1}})">修改</button>
+                    <button onclick="ondelete(this,{{i+1}})">删除</button>
+                </td>
+            </tr>
+            {% end %}
+        </table>
+    </div>
+</div>
+<div class="Sure">
+    <div class="SureBox">
+        <p> 确认删除该用户？ </p>
+        <div>
+            <span class="SureBtn" onclick="suredelete()" >确定</span>
+            <span class="SureBtn" onclick="surecancel()" >取消</span>
+        </div>
+
+    </div>
+</div>
+</body>
+
+</html>
