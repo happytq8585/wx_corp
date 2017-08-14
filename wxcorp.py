@@ -279,11 +279,14 @@ class PersonalCenterHandler(BaseHandler):
 class OrderListHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
-        uid         = self.get_secure_cookie("userid")
+        uid         = int(self.get_secure_cookie("userid"))
         olist       = query_order_list_by_uid(uid)
         print(olist)
         role        = self.get_role()
-        self.render("OrderList.html", olist=olist, role=role)
+        if role == 2:#not canteen administrator
+            self.render("AdminCanteen.html", role=role)
+        else:
+            self.render("OrderList.html", olist=olist, role=role)
 class EmployeeHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
