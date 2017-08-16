@@ -179,7 +179,8 @@ class CanteenItemHandler(BaseHandler):
         t = time.localtime();
         timestamp = time.strftime("%Y.%m.%d", t)
         role = self.get_role()
-        self.render("canteenList.html", R=r, C=c, user_comment=user_comment, today=timestamp, role=role)
+        uname = self.get_secure_cookie("username")
+        self.render("canteenList.html", R=r, C=c, user_comment=user_comment, today=timestamp, role=role, username=uname)
     def post(self):
         pass
 class LogoutHandler(tornado.web.RequestHandler):
@@ -253,7 +254,8 @@ class PersonalCenterHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         role = self.get_role()
-        self.render("PersonalCenter.html", role=role)
+        uname = self.get_secure_cookie("username")
+        self.render("PersonalCenter.html", role=role, username=uname)
     def post(self):
         t     = self.get_argument("type", None)
         if not t:
@@ -283,16 +285,18 @@ class OrderListHandler(BaseHandler):
         olist       = query_order_list_by_uid(uid)
         print(olist)
         role        = self.get_role()
+        uname = self.get_secure_cookie("username")
         if role == 2:#not canteen administrator
-            self.render("AdminCanteen.html", role=role)
+            self.render("AdminCanteen.html", role=role, username=uname)
         else:
-            self.render("OrderList.html", olist=olist, role=role)
+            self.render("OrderList.html", olist=olist, role=role, username=uname)
 class EmployeeHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         users       = query_all_users()
         role        = self.get_role()
-        self.render("Employeelists.html", userlists=users, role=role)
+        uname = self.get_secure_cookie("username")
+        self.render("Employeelists.html", userlists=users, role=role, username=uname)
     @tornado.web.authenticated
     def post(self):
         action      = str(self.get_argument("action", ""))

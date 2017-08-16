@@ -20,7 +20,9 @@ create table if not exists order_info
  dish_name varchar(64) not null, /*菜名*/
  img_url   varchar(128) not null, /*菜的图片的url*/
  num     int unsigned not null, /*数量*/
- time timestamp default CURRENT_TIMESTAMP     /*评论的时间*/
+ time timestamp default CURRENT_TIMESTAMP,    /*评论的时间*/
+ landing_url varchar(256), /*订单页中图片的landing page url*/
+ time2 timestamp default CURRENT_TIMESTAMP    /*取食品的时间*/
 ) engine=InnoDB, charset=utf8;
 
 /*菜的数据库表*/
